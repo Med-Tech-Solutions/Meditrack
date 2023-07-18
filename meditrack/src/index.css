@@ -11,3 +11,47 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.App {
+  text-align: center;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+
+/*
+==============================
+          Homepage
+==============================
+*/
+
+.homepage-container {
+  margin: 70px;
+}
+
+
+/*
+==============================
+          Navbar
+==============================
+*/
+
+/* .navbar {
+  background-color: #333;
+  color: rgb(240, 234, 214);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  padding: 0 1rem; 
+}
+
+.navbar a {
+  color: inherit;
+} */
