@@ -20,8 +20,11 @@ const Patient = ({ firstName, lastName, age, weight, medications }) => {
   };
 
   const handleAddMed = () => {
+
+    // Update 
     const email = localStorage.getItem('email');
 
+    // Package state variables into a medication object that will be sent to backend
     const medication = {
       name,
       dosage,
@@ -29,10 +32,14 @@ const Patient = ({ firstName, lastName, age, weight, medications }) => {
       directions,
     };
 
+    // Request User data from database
     fetch(`/api/dashboard/${email}`)
       .then((data) => data.json())
       .then((data) => {
+        // Locate patient in User obj by iterating over the patientsArray property
         const update = data.patients.map((patient) => {
+          // While iterating over obj, if the patient first name is the same as the passed-in prop 'firstName', then return this patient with an updated medications array
+            // Medications array should contain all previous information as well as the recently intialized medication object
           if (patient.firstName === firstName) {
             return {
               ...patient,
@@ -42,8 +49,7 @@ const Patient = ({ firstName, lastName, age, weight, medications }) => {
           return patient;
         });
 
-        console.log('update', update);
-
+        // Send the update to the backend to update the User's collection
         fetch(`/api/dashboard/patient`, {
           method: 'POST',
           headers: {
@@ -60,6 +66,7 @@ const Patient = ({ firstName, lastName, age, weight, medications }) => {
 
     // setMedListKey((prevKey) => prevKey + 1);
 
+    // Reset state variables
     setName('');
     setDosage('');
     setFrequency('');
@@ -74,8 +81,10 @@ const Patient = ({ firstName, lastName, age, weight, medications }) => {
       <p>Age: {age}</p>
       <p>Weight: {weight}</p>
       <button className="show-meds" onClick={handleShowMeds}>
+        {/* Conditionally renders the following string in the button */}
         {showMeds ? 'Hide Medications' : 'Show Medications'}
       </button>
+      {/* If showMeds is true, then render a MedList component */}
       {showMeds && <MedList key={medListKey} medications={medications} firstName={firstName}/>}
       <br />
       <button className="add-med" onClick={handleAddClick}>

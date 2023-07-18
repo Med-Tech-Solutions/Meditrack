@@ -30,37 +30,35 @@ const Login = props => {
         }).catch((Error) => {
             console.log(Error)
         })
-        // .then((data) => {
-        //     if (data.ok) {
-
-        //     } else console.log('data not ok!')
-        // });
     };
     
     return(
-        <div className="form-container">
-            <form className="form-input" onSubmit={(event) => {
-                event.preventDefault();
-                handleLogin();
-                console.log('hello')}}>
-                <input
-                type="text"
-                placeholder="Email"
-                value={email}
-                onChange={(e)=>setEmail(e.target.value)}
-                >
-                </input>
-                <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e)=>setPassword(e.target.value)}
-                >
-                </input><br></br>
-                <input type="submit"></input>
-            </form>
-            {errorMessage && <p className="login-error">Email or password is incorrect!</p>}
-        </div>
+            <div style={{height: "89vh", overflow: "hidden"}}>
+                <div className="form-container">
+                    <h3>Login:</h3>
+                    <form className="form-input" onSubmit={(event) => {
+                        event.preventDefault();
+                        handleLogin();
+                        console.log('hello')}}>
+                        <input
+                        type="text"
+                        placeholder="Email"
+                        value={email}
+                        onChange={(e)=>setEmail(e.target.value)}
+                        >
+                        </input>
+                        <input
+                        type="password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e)=>setPassword(e.target.value)}
+                        >
+                        </input><br></br>
+                        <input type="submit"></input>
+                    </form>
+                    {errorMessage && <p className="login-error">Email or password is incorrect!</p>}
+                </div>
+            </div>
     );
 };
 

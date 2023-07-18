@@ -10,8 +10,8 @@ const Dashboard = props => {
     const email = localStorage.getItem('email');
     const name = localStorage.getItem('firstName');
 
+    // Obtain the User's data from the database
     useEffect( () => {
-        // console.log("useEffect fetch")
         const email = localStorage.getItem('email');
         fetch(`/api/dashboard/${email}`)
         .then((data) => data.json()) 
@@ -23,14 +23,19 @@ const Dashboard = props => {
     }, []);
     
     const handleAddPatient = () => {
-        
-            let update = [...patientsArray];
-            update.push({
-                firstName,
-                lastName,
-                age,
-                weight
-            })
+    
+        // Initialize an array 'update' to be equal to what is stored in the state patientsArray variable
+        let update = [...patientsArray];
+
+        // Push relevant state variables to the update array
+        update.push({
+            firstName,
+            lastName,
+            age,
+            weight
+        });
+
+        // Send the updated data to the backend to be added to the patched to the 
         fetch(`/api/dashboard/patient`, {
             method: 'POST',
             headers: {
@@ -55,7 +60,7 @@ const Dashboard = props => {
     }
 
     return (
-        <div className = 'dashboard-container'>
+        <div className = 'dashboard-container' >
             <h2>Welcome, {name}!</h2>
             <h3 className="patients-header">Patients</h3>
             <div className="patients-container">

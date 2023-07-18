@@ -12,7 +12,10 @@ const ScheduleReminders = () => {
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [selectedMedication, setSelectedMedication] = useState(null);
 
+
+
   useEffect(() => {
+    // Obtain all of the patients assigned to a user
     const email = localStorage.getItem('email');
     fetch(`/api/dashboard/${email}`)
       .then((data) => data.json())
@@ -22,28 +25,31 @@ const ScheduleReminders = () => {
       .catch(() => console.log('Error fetching patients'));
   }, []);
 
+
   const handleEnrollPatient = (e) => {
     e.preventDefault();
 
-    if (!selectedPatient || !selectedMedication) {
-      // Handle error: Patient or medication not selected
-      return;
-    }
+    // TODO: Handle patient or medication not selected
 
     // Generate the dates array
     const email = localStorage.getItem('email');
     const dates = generateDateArray(startDate, numDoses, frequency);
     console.log(dates);
 
+
+    // Cycle through patients to find the one the user selected
+      // Push the selected medication and intake schedule to the patient's futureIntake array
     for (let i = 0; i < patientsArray.length; i++) {
       if (patientsArray[i].firstName === selectedPatient) {
-        patientsArray[i].futureIntake = { medicationName: selectedMedication, dates };
+        patientsArray[i].futureIntake.push({ medicationName: selectedMedication, dates });
       }
     }
 
+    // Package the patient's array into an update to send to the backend
     const update = [...patientsArray];
 
-    console.log('update', update);
+    // Post the update to the user's patients array
+      // Body should contain the user's email (on localStorage object) and the update
     fetch(`/api/dashboard/patient`, {
       method: 'POST',
       headers: {
@@ -54,38 +60,56 @@ const ScheduleReminders = () => {
   };
 
   function generateDateArray(startDate, numDoses, frequency) {
+    /*
+      Input: 
+        - The selected start date when the medication will begin
+        - The number of doses the patient will need to take
+        - How often the patient will need to take the medication (in hours)
+      Output:
+        - An array of Date objects representing when the medication should be taken
+    */
     const datesArr = [];
 
     for (let i = 0; i < numDoses; i++) {
-      if (!datesArr.length) datesArr[0] = new Date(startDate);
+      // If the array of Date objects contains nothing, initialize a new Date object with the startDate and push it to the array
+      if (!datesArr.length) datesArr.push(new Date(startDate));
       else {
+        // Store the previous indexed Date object in a temporary variable
         let date = new Date(datesArr[i - 1]);
+        // Obtain the hours of the temp variable and add the frequency to them
         let hours = date.getHours() + Number(frequency);
+        // Update the temp variable's hours and push it to the array
         date.setHours(hours);
         datesArr.push(date);
       }
     }
 
-    console.log(datesArr);
     return datesArr;
 }
 
 const handleSetPatient = (patient) => {
+  // Update the state patient variable with the patient selected from the dropdown menu
     setSelectedPatient(patient);
   
+    // Store the selected patient in an object
     const patientObj = patientsArray.find((p) => p.firstName === patient);
     if (patientObj) {
+      // Update the state medications list variable with the array that is a property on the selected patient object
       setMedList(patientObj.medications);
     }
   };
 
+  // Comments in the following return statement are DRY in that they are not repeated despite similar logic throughout statement
   return (
-    <div className="reminder-container">
+    // Inline styling attempting to force footer to bottom of the browser page
+    <div className="reminder-container" style={{height: "89vh", overflow: "hidden"}}>
       <h1>Schedule Reminders</h1>
       <div className="form-container">
         <form className="form-input" onSubmit={handleEnrollPatient}>
           <label>
+            {/* Characters below are blank spaces */}
             Patient Name:&nbsp;&nbsp;
+            {/* Dropdown menu of available patients */}
             <select value={selectedPatient} onChange={(e) => handleSetPatient(e.target.value)}>
               <option value="">Select Patient</option>
               {patientsArray.map((patient) => (
@@ -108,12 +132,10 @@ const handleSetPatient = (patient) => {
                 ))}
             </select> 
         </label>
-
-
-
           
         <label>
             Start Date and Time:&nbsp;&nbsp;
+            {/* DatePicker obj to send proper startDate to generateDatesArray function */}
             <DatePicker
               selected={startDate}
               onChange={(date) => setStartDate(date)}
@@ -124,10 +146,13 @@ const handleSetPatient = (patient) => {
               placeholderText="Start Date & Time"
             />
           </label>
+
+          {/* TODO: Explain why Dosages are important */}
           <label>
             Number of Doses:&nbsp;&nbsp;
             <input type="text" value={numDoses} onChange={(e) => setNumDoses(e.target.value)} />
           </label>
+          {/* TODO: Write logic that allows user to choose between hours and days */}
           <label>
             Frequency (in hours):&nbsp;&nbsp;
             <input type="text" value={frequency} onChange={(e) => setFrequency(e.target.value)} />

@@ -17,14 +17,19 @@ const PatientCalendar = props => {
   const [patientsArray, setPatientsArray] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState([]);
 
+  // Request User's data from the database
   useEffect( () => {
     const email = localStorage.getItem('email');
     fetch(`/api/dashboard/${email}`)
     .then((data) => data.json()) 
     .then((data) => {
+      // Update the state patientsArray variable with the User's patientsArray property
         setPatientsArray(data.patients);
+        // Store an events array full of the medication logs of each patient
         const events = data.patients.reduce((acc, patient) => {
+          // Adds the array returned from map to the accumulator array parameter
           return acc.concat(
+            // Iterates over the medicationLog for each patient and stores relevant information in an object
             patient.medicationLog.map((log) => ({
               title: log.medication,
               start: new Date(log.date),
@@ -32,7 +37,7 @@ const PatientCalendar = props => {
             }))
           );
         }, []);
-  
+        // Update the state variable with the newly initialized events array
         setAllEvents(events);
     })
     .catch(() => console.log("got nothing"))
@@ -53,8 +58,13 @@ const PatientCalendar = props => {
 
 
   const handlePatientSelection = (patient) => {
+    // Update the state selectedPatient variable with the patient value selected by the User
     setSelectedPatient(patient);
+
+    // Return an array of events from the allEvents state variable relevant to the selected patient
     const filteredEvents = allEvents.filter((event) => event.patientFirstName === patient.firstName);
+
+    // Update the selectedEvents state variable with the newly initialized array
     setSelectedEvents(filteredEvents);
   };
   
@@ -64,6 +74,7 @@ const PatientCalendar = props => {
       return;
     }
   
+    // Package data that will be sent to the backend in an update
     const eventPayload = {
       medication: newEvent.title,
       date: newEvent.start,
@@ -80,8 +91,12 @@ const PatientCalendar = props => {
     }]);
   
     const email = localStorage.getItem('email');
-  
-    let update = [];
+    
+    // Update the patientsArray state variable
+    // setPatientsArray(...update);
+    
+    // Initialize temp variable to send to backend to update the User's document
+    let update = [...patientsArray];
     fetch(`/api/dashboard/${email}`)
       .then((data) => data.json())
       .then((data) => {
@@ -91,21 +106,23 @@ const PatientCalendar = props => {
             update[i].medicationLog.push(eventPayload);
           }
         }
+      });
         console.log('update', update);
-        fetch('/api/dashboard/patient', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ email, update })
-        })
-          .then(response => response.json())
-          .then(data => {
-            setNewEvent({ title: '', start: null });
-          })
-          .catch(error => {
-            console.error("Could not process POST request");
-          });
+
+    // Send the update to the backend
+    fetch('/api/dashboard/patient', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ email, update })
+    })
+      .then(response => response.json())
+      .then(data => {
+        setNewEvent({ title: '', start: null });
+      })
+      .catch(error => {
+        console.error("Could not process POST request");
       });
   };
   
@@ -113,7 +130,7 @@ const PatientCalendar = props => {
   
     
   return (
-    <div className="med-calendar-container">
+    <div className="med-calendar-container" style={{minHeight: "87vh"}}>
       <h1>Medicine Dosage Log</h1>
   
       <div>

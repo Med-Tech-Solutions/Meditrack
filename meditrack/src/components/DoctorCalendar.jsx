@@ -102,7 +102,7 @@ const DoctorCalendar = () => {
   };
 
   return (
-    <div>
+    <div className="scheduler-calendar" style={{minHeight: "100vh"}} >
       <h1>Doctor Calendar</h1>
 
       <div>
@@ -144,7 +144,7 @@ const DoctorCalendar = () => {
                   <>
                     <p>Selected Date: {format(date.justDate, 'MM/dd/yyyy')}</p>
                     <p>Select Time:</p>
-                    <div>
+                    <div style={{display: "flex", justifyContent: "center"}}>
                       {timesAvailable.map((time, i) => (
                         <div key={`time-${i}`}>
                           <button

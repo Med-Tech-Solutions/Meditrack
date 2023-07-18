@@ -13,6 +13,7 @@
 }
 
 .home-image img {
+    
     width: 100%;
     height: 100%;
 }
@@ -21,8 +22,9 @@
     flex: 1;
     display: flex;
     justify-content: flex-start;
-
+    text-align: center;
     flex-direction: column;
+    /* margin-right: 0; */
 }
 
 .home-content h4 {
@@ -51,6 +53,23 @@
     font-weight: 400;
     font-size: 16px;
     line-height: 30px;
-
+    
     margin-bottom: 2rem;
+}
+
+.home-section-padding {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.upper-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.upper-text {
+    text-align: center;
+    width: 50%;
 }
