@@ -5,9 +5,9 @@ const { dashboardController } = require('./controllers/dashboardController')
 const { medicationController } = require('./controllers/medicationController')
 const port = 3000;
 const mongoose = require('mongoose');
-const client = require('twilio')('AC08ded748a1d1c45ddbc34311218ad235', '35646b7d7c1f32510417fefe5e00412b');
+// const client = require('twilio')('AC08ded748a1d1c45ddbc34311218ad235', '35646b7d7c1f32510417fefe5e00412b');
 
-mongoose.connect('mongodb+srv://seandromine:z0JRqCLk6zWekT9n@medicluster.94paoel.mongodb.net/?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb+srv://meditracker:NTSWSvmP7w04CT72@meditracker.y5vjxra.mongodb.net/', { useNewUrlParser: true, useUnifiedTopology: true });
 mongoose.connection.once('open', () => {
   console.log('Connected to Database');
 });
