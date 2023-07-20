@@ -57,11 +57,13 @@ const userSchema = new Schema({
     // weight: {type: Number, required: true},
     email: {type: String, required: true},
     password: {type: String, required: true},
-    patients: {type: [patientSchema], required: false}
+    patients: {type: [patientSchema], required: false},
+    role: { type: String, required: true},
+    session: {type: String},
+    expiration: {type: String}
 })
 
 const User = mongoose.model('user', userSchema)
-
 
 
 module.exports = {
