@@ -12,8 +12,6 @@ const ScheduleReminders = () => {
   const [selectedPatient, setSelectedPatient] = useState(null);
   const [selectedMedication, setSelectedMedication] = useState(null);
 
-
-
   useEffect(() => {
     // Obtain all of the patients assigned to a user
     const email = localStorage.getItem('email');
@@ -35,7 +33,6 @@ const ScheduleReminders = () => {
     const email = localStorage.getItem('email');
     const dates = generateDateArray(startDate, numDoses, frequency);
     console.log(dates);
-
 
     // Cycle through patients to find the one the user selected
       // Push the selected medication and intake schedule to the patient's futureIntake array
