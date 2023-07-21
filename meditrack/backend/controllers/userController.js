@@ -16,7 +16,7 @@ const userController = {
     if (!firstName || !lastName || !email || !password)
       // return res.status(400).json({ error: 'Did not receive first name and/or last name'});
       return next({
-        err: "Error ccreating a new user, missing first name, last name, email, or password",
+        err: "Error creating a new user, missing first name, last name, email, or password",
       }); //JB
 
     // const userExists = await User.findOne({ email })
@@ -150,8 +150,8 @@ const userController = {
 
   // check session
   async checkSession(req, res, next) {
-    const email = req.cookie.email;
-    const token = req.cookie.token;
+    const email = req.cookies.email;
+    const token = req.cookies.token;
 
     if (!token) {
       return next({
@@ -164,7 +164,7 @@ const userController = {
     const dateNow = new Date();
 
     // get user session from database and check if it is expired
-    const userSession = User.findOne({ email: email });
+    const userSession = await User.findOne({ email: email });
     const expireDate = userSession.expiration;
     // were going to use cookie.token to see if user is authenticated
     jwt.verify(token, process.env.ACCESS_TOKEN, (err, token) => {
