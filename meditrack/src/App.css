@@ -320,6 +320,10 @@ body {
   margin-bottom: 5px;
 }
 
+.weekCheck {
+  color: black;
+}
+
 #add-patient-form {
   margin-bottom: 200px
 }
