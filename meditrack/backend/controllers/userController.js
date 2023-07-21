@@ -20,7 +20,7 @@ const userController = {
       }); //JB
 
     // const userExists = await User.findOne({ email })
-
+    const hashedPassword = await bcrypt.hash(password, 10); 
     User.findOne({ email: email }).then((user) => {
       if (user) {
         // res.status(400)
@@ -31,7 +31,7 @@ const userController = {
           firstName,
           lastName,
           email,
-          password,
+          password: hashedPassword,
           role: "user",
         });
 
@@ -61,7 +61,7 @@ const userController = {
     console.log(req.body);
     const { email, password } = req.body;
     if (!email || !password) return next({ err: "incorrect credentials" });
-    User.findOne({ email: email, password: password })
+    User.findOne({ email: email })
       .then(async (user) => {
         if (!user)
           return next({
@@ -99,6 +99,7 @@ const userController = {
   // creating a session
   async createSession(req, res, next) {
     // get user from res.locals set in checkSession
+    try { 
     const userEmail = res.locals.user.email;
     const hashedStr = crypto.randomBytes(15).toString("hex");
 
@@ -130,10 +131,11 @@ const userController = {
       return date.setSeconds(date.getSeconds() + sec);
     }
     // adding 30 minutes
-    const exp = timeCheck(Date.now(), 60 * 30);
+    const date = new Date();
+    const exp = timeCheck(date, 60 * 30);
 
     // update database
-    User.findOneAndUpdate(
+    await User.findOneAndUpdate(
       { email: userEmail },
       {
         session: token,
@@ -142,17 +144,23 @@ const userController = {
         // { new: true}
       }
     );
-
     next();
+    } catch (err){
+      return next({
+        log: "Express error handler caught unknown middleware error",
+        status: 400,
+        message: { err: `An error occurred in createSession, error: ${err}` },
+      })
+    }
     // add token to session in users database
     // set exp date in database
   },
 
   // check session
   async checkSession(req, res, next) {
+    try {
     const email = req.cookies.email;
     const token = req.cookies.token;
-
     if (!token) {
       return next({
         log: "Express error handler caught unknown middleware error",
@@ -167,7 +175,7 @@ const userController = {
     const userSession = await User.findOne({ email: email });
     const expireDate = userSession.expiration;
     // were going to use cookie.token to see if user is authenticated
-    jwt.verify(token, process.env.ACCESS_TOKEN, (err, token) => {
+    await jwt.verify(token, process.env.ACCESS_TOKEN, (err, token) => {
       if (err) {
         return next(err);
       }
@@ -178,16 +186,22 @@ const userController = {
     
     // compare our expiration dates current time vs created time
     // session has expired
-    if (dateNow.getTime() > expireDate.getTime()) {
+    if (dateNow.getTime() > expireDate) {
       return next({
         log: "Express error handler caught unknown middleware error",
         status: 400,
-        message: { err: "An error occurred in checkSession" },
+        message: { err: "Token is expired, need to log in" },
       });
     }
     // passing to next middleware essentially refreshes session
     next();
-
+    } catch (err) {
+      return next({
+        log: "Express error handler caught unknown middleware error",
+        status: 400,
+        message: { err: `An error occurred in checkSession, error: ${err}` },
+      })
+    }
     // after we verify token is good we need to verify user is who they are
   },
 

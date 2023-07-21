@@ -5,6 +5,7 @@ const { dashboardController } = require('./controllers/dashboardController')
 const { medicationController } = require('./controllers/medicationController')
 const port = 3000;
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser')
 // const client = require('twilio')('AC08ded748a1d1c45ddbc34311218ad235', '35646b7d7c1f32510417fefe5e00412b');
 
 mongoose.connect('mongodb+srv://meditracker:NTSWSvmP7w04CT72@meditracker.y5vjxra.mongodb.net/', { useNewUrlParser: true, useUnifiedTopology: true });
@@ -13,11 +14,11 @@ mongoose.connection.once('open', () => {
 });
 
 const app = express();
-
+app.use(cookieParser())
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.get('/api/dashboard/:email', userController.getPatients, (req, res) => {
+app.get('/api/dashboard/:email', userController.checkSession, userController.createSession, userController.getPatients, (req, res) => {
     res.status(200).json(res.locals.user);
 })
 
@@ -26,7 +27,7 @@ app.post('/api/signup', userController.createUser, (req, res) => {
     res.status(200).json(res.locals.newUser);
 })
 
-app.post('/api/login', userController.getUser, (req, res) => {
+app.post('/api/login', userController.getUser, userController.createSession, (req, res) => {
   res.status(200).json(res.locals.user);
 })
 
