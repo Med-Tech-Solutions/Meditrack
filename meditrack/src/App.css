@@ -59,6 +59,26 @@ body {
   /* margin: 70px; */
 }
 
+.dashboard-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+}
+
+.patients-list {
+    gap: 2rem;
+    display: grid;
+    grid-auto-flow: row;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.patients-container {
+  padding: 40px;
+  /* width: 100%; */
+  /* grid-auto-flow: row; */
+  grid-column: 2 / span 4;
+}
+
 .link {
   /* color: var(--light-red-pink); */
   color: #AE2B7B;
