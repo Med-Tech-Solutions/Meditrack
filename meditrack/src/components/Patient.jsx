@@ -22,7 +22,8 @@ const Patient = ({ firstName, lastName, age, weight, medications }) => {
   };
 
   const handleAddClick = () => {
-    setAddMeds(true);
+      // Toggle the value of addMeds
+      setAddMeds((prevAddMeds) => !prevAddMeds);
   };
 
   //loop over checkedState array using map method; if the value of the passed position parameter matches with the current index, then we reverse its value. 
@@ -127,7 +128,7 @@ const Patient = ({ firstName, lastName, age, weight, medications }) => {
       {showMeds && <MedList key={medListKey} medications={medications} firstName={firstName}/>}
       <br />
       <button className="add-med" onClick={handleAddClick}>
-        Add Medication
+        {addMeds ? 'Hide Add Medications' : 'Add Medications'}  
       </button>
       {addMeds && (
         // Updating this form-container to include start date, dosage - add units?, days of the week taking it, frequency per day (turn into dropdown?), specific times to take the medication 

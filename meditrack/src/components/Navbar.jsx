@@ -14,6 +14,7 @@ const Navbar = () => {
         <Link className="site-title" to="/">Meditrack</Link>
         <ul>
             <CustomLink to="/dashboard/:email">Dashboard</CustomLink>
+            <CustomLink to="/patients">Patients</CustomLink>
             <CustomLink to="/schedule">Schedule Reminders</CustomLink>
             <CustomLink to="/patientcal">Medication Calendar</CustomLink>
             <CustomLink to="/doccal">Schedule an Appointment</CustomLink>
