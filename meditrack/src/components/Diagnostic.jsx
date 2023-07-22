@@ -29,8 +29,8 @@ const Diagnostic = (symptoms) => {
     try {
       const response = await fetch(apiUrl, requestOptions);
       const data = await response.json();
-      // console.log(data.choices[0].text);
-      // let sentence = data.choices[0].text;
+      console.log(data.choices[0].text);
+      let sentence = data.choices[0].text;
       console.log(data)
       formatAnswer(sentence);
     } catch (error) {

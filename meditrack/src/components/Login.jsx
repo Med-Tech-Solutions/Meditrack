@@ -25,7 +25,7 @@ const Login = props => {
                 // console.log(data);
                 localStorage.setItem('email', email);
                 localStorage.setItem('firstName', data.firstName);
-                navigate(`/dashboard/${email}`);
+                navigate(`/dashboard`);
             }
         }).catch((Error) => {
             console.log(Error)
