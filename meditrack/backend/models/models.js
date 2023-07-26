@@ -16,8 +16,6 @@ const futureIntakeSchema = new mongoose.Schema({
 
 const FutureIntake = mongoose.model('futureIntake', futureIntakeSchema)
 
-
-
 const medicationLogSchema = new mongoose.Schema({
     medication: {type : String, require : false},
     date: { type: Date, required : true },
@@ -28,6 +26,7 @@ const MedicationLog = mongoose.model('medicationLog', medicationLogSchema)
 
 const medicationSchema = new Schema({
     name: {type: String, required: true},
+    week: {type: String, required: true},
     dosage: {type: String, required: true},
     frequency: {type: String, required: true},
     directions: {type: String, required: true},
