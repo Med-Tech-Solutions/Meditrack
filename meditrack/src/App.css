@@ -59,6 +59,26 @@ body {
   /* margin: 70px; */
 }
 
+.dashboard-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+}
+
+.patients-list {
+    gap: 2rem;
+    display: grid;
+    grid-auto-flow: row;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.patients-container {
+  padding: 40px;
+  /* width: 100%; */
+  /* grid-auto-flow: row; */
+  grid-column: 2 / span 4;
+}
+
 .link {
   /* color: var(--light-red-pink); */
   color: #AE2B7B;
@@ -207,11 +227,12 @@ body {
 */
 
 .form-container {
-  display: flex;
-  flex-direction: column;
+  /* display: flex; */
+  /* flex-direction: column; */
   align-items: center;
   justify-content: center;
-  height: 50vh;
+  margin-top: 5px;
+  height: 55vh;
 }
 
 .form-input {
@@ -266,25 +287,48 @@ body {
 
 ======================================================================================================================================================
 */
+.dashboard-container{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  /* gap: 20px;  */
+  /* grid-auto-flow: column;  */
+}
 
-.patients-header {
+/* .patients-header {
   font-size: 2rem;
   margin-top: 50px;
   margin-bottom: 50px;
   color: var(--dark-blue);
-}
+} */
 
 .patients-container {
-  padding: 20px 30px 50px 30px;
-  width: 100%;
+  /* grid-column-start: 2;
+  grid-column-end: 6;  */
+  padding: 40px;
+  /* width: 100%; */
+  /* grid-auto-flow: row; */
+  grid-column: 2 / span 4;
+}
+
+#add-patient-form {
+  /* grid-column-start: 1;
+  grid-column-end: 2; */
+  margin-bottom: 200px;
+  grid-row-start: 2; 
+  grid-row-end: 3;
+  margin: 50px;
+  position: fixed;
 }
 
 .patients-list {
-  display: flex;
+  /* display: flex;
   flex-wrap: wrap;
+  margin: 0 200px; */
   gap: 2rem;
-  margin: 0 200px;
-  
+  display: grid; 
+  grid-auto-flow: row;
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .patient {
@@ -320,8 +364,8 @@ body {
   margin-bottom: 5px;
 }
 
-#add-patient-form {
-  margin-bottom: 200px
+.weekCheck {
+  color: black;
 }
 
 /*

@@ -1,64 +1,116 @@
-const express = require('express');
+const express = require("express");
 // const dotenv = require('dotenv').config();
-const { userController } = require('./controllers/userController')
-const { dashboardController } = require('./controllers/dashboardController')
-const { medicationController } = require('./controllers/medicationController')
+const { userController } = require("./controllers/userController");
+const { dashboardController } = require("./controllers/dashboardController");
+const { medicationController } = require("./controllers/medicationController");
 const port = 3000;
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
+const cookieParser = require("cookie-parser");
+const cors = require("cors");
 // const client = require('twilio')('AC08ded748a1d1c45ddbc34311218ad235', '35646b7d7c1f32510417fefe5e00412b');
 
-mongoose.connect('mongodb+srv://meditracker:NTSWSvmP7w04CT72@meditracker.y5vjxra.mongodb.net/', { useNewUrlParser: true, useUnifiedTopology: true });
-mongoose.connection.once('open', () => {
-  console.log('Connected to Database');
+mongoose.connect(
+  "mongodb+srv://meditracker:NTSWSvmP7w04CT72@meditracker.y5vjxra.mongodb.net/",
+  { useNewUrlParser: true, useUnifiedTopology: true }
+);
+mongoose.connection.once("open", () => {
+  console.log("Connected to Database");
 });
 
 const app = express();
-
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(
+  cors({
+    origin: ["http://localhost:8080"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 
-app.get('/api/dashboard/:email', userController.getPatients, (req, res) => {
+// app.get(
+//   "/dashboard/:email",
+//   // userController.checkSession,
+//   // userController.createSession,
+//   userController.getPatients,
+//   (req, res) => {
+//     res.status(200).json(res.locals.user);
+//   }
+// );
+
+app.get(
+  "/api/dashboard/:email",
+  userController.checkSession,
+  userController.createSession,
+  userController.getPatients,
+  (req, res) => {
     res.status(200).json(res.locals.user);
-})
+  }
+);
 
-app.post('/api/signup', userController.createUser, (req, res) => {
-  console.log('attempted to create user');
-    res.status(200).json(res.locals.newUser);
-})
+app.post("/api/signup", userController.createUser, (req, res) => {
+  console.log("attempted to create user");
+  res.status(200).json(res.locals.newUser);
+});
 
-app.post('/api/login', userController.getUser, (req, res) => {
-  res.status(200).json(res.locals.user);
-})
+app.post(
+  "/api/login",
+  userController.getUser,
+  userController.createSession,
+  (req, res) => {
+    res.status(200).json(res.locals.user);
+  }
+);
 
 //update user
-app.put('/api/dashboard/:email', userController.updateUser, (req, res) => {
-    res.status(200).json({message: 'User updated!'})
-})
+app.put("/api/dashboard/:email", userController.updateUser, (req, res) => {
+  res.status(200).json({ message: "User updated!" });
+});
 
-app.delete('/api/delete/:email', userController.deleteUser, (req, res) => {
-    res.status(200).json({message: 'User deleted!'})
-})
+app.delete("/api/delete/:email", userController.deleteUser, (req, res) => {
+  res.status(200).json({ message: "User deleted!" });
+});
+
+// logout
+// app.use("api/logout", userController.logout, (req, res) => {
+//   return res.status(200).json({ message: "User is logged out" });
+// });
 
 //Routes for patient
 
-app.post('/api/dashboard/patient', dashboardController.createPatient, (req, res) => {
-  res.status(200).json({message: 'Patient created!'})
-})
+app.post(
+  "/api/dashboard/patient",
+  userController.checkSession,
+  userController.createSession,
+  dashboardController.createPatient,
+  (req, res) => {
+    return res.status(200).json(res.locals.loggedin);
+  }
+);
 
-app.get('/api/dashboard/:firstName', dashboardController.getPatient, (req, res) => {
-  res.status(200).json({message: 'Patient created!'})
-})
+app.get(
+  "/api/dashboard/:firstName",
+  dashboardController.getPatient,
+  (req, res) => {
+    res.status(200).json({ message: "Patient created!" });
+  }
+);
 
-app.delete('/api/dashboard/delete/:firstName', dashboardController.deletePatient, (req, res) => {
-  res.status(200).json({message: 'Patient deleted!'})
-})
+app.delete(
+  "/api/dashboard/delete/:firstName",
+  dashboardController.deletePatient,
+  (req, res) => {
+    res.status(200).json({ message: "Patient deleted!" });
+  }
+);
 
-app.get('/api/doctor', userController.getDoctors, (req, res) => {
+app.get("/api/doctor", userController.getDoctors, (req, res) => {
   res.status(200).json(res.locals.doctors);
 });
 
-app.post('/api/doctor', userController.createDoctor, (req, res) => {
-  res.status(200).json({message: 'Doctor created!'});
+app.post("/api/doctor", userController.createDoctor, (req, res) => {
+  res.status(200).json({ message: "Doctor created!" });
 });
 
 // function sendTextMessage() {
@@ -68,7 +120,6 @@ app.post('/api/doctor', userController.createDoctor, (req, res) => {
 //     from: '+18337581251'
 //   }).then(message => console.log(message));
 // }
-
 
 //Routes for medication
 // app.post('/api/dashboard/medication', medicationController.createPatient, (req, res) => {
@@ -83,12 +134,11 @@ app.post('/api/doctor', userController.createDoctor, (req, res) => {
 //   res.status(200).json({message: 'Medication deleted!'})
 // })
 
-
 app.use((err, req, res, next) => {
   const defaultErr = {
-    log: 'Express error handler caught unknown middleware error',
+    log: "Express error handler caught unknown middleware error",
     status: 400,
-    message: { err: 'An error occurred' },
+    message: { err: "An error occurred" },
   };
   const errorObj = Object.assign({}, defaultErr, err);
   console.log(errorObj.log);
