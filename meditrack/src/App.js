@@ -12,6 +12,8 @@ import Diagnostic from './components/Diagnostic';
 import DoctorCalendar from './components/DoctorCalendar';
 import PatientCalendar from './components/PatientCalendar';
 import ScheduleReminders from './components/ScheduleReminders';
+import SideNav from './components/SideNav';
+import Patient from '../backend/models/models';
 
 /*
 ====================================
@@ -35,6 +37,7 @@ function App() {
           <Route path="/patientcal" element={<PatientCalendar />}></Route>
           <Route path="/dse" element={<Diagnostic />}></Route>
           <Route path="/schedule" element={<ScheduleReminders/>}></Route>
+          <Route path="/patient" element={<Patient/>}></Route>
         </Routes>
         <Footer />
       </header>

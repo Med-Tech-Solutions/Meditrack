@@ -19,9 +19,7 @@ const dashboardController = {
         }
         catch(err){
           return next({err : `Error creating a new patient, ${err}`});
-        }
-           
-          
+        }    
       },
 
     // async getPatient(req, res, next) {

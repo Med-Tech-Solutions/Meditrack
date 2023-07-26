@@ -61,6 +61,7 @@ app.post('/api/doctor', userController.createDoctor, (req, res) => {
   res.status(200).json({message: 'Doctor created!'});
 });
 
+
 // function sendTextMessage() {
 //   client.message.create({
 //     body: 'Hello from Node',

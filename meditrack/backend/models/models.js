@@ -37,6 +37,7 @@ const medicationSchema = new Schema({
 
 const Medication = mongoose.model('medication', medicationSchema)
 
+
 const patientSchema = new Schema({
     firstName: {type: String, required: true},
     lastName: {type: String, required: true},
@@ -44,7 +45,7 @@ const patientSchema = new Schema({
     weight: {type: Number, required: true},
     medications: {type: [medicationSchema], required: false},
     medicationLog : {type: [medicationLogSchema], required : false},
-    futureIntake : {type: futureIntakeSchema, required: false} 
+    futureIntake : {type: futureIntakeSchema, required: false},
 })
 
 const Patient = mongoose.model('patient', patientSchema)
@@ -72,5 +73,6 @@ module.exports = {
     User,
     MedicationLog,
     FutureIntake,
-    Doctor
+    Doctor,
+    Event,
 }
