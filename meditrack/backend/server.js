@@ -98,9 +98,9 @@ app.post('/api/doctor', userController.createDoctor, (req, res) => {
 //   res.status(200).json({message: 'Medication Retrieved!'})
 // })
 
-// app.delete('/api/dashboard/delete/:firstName', medicationController.deletePatient, (req, res) => {
-//   res.status(200).json({message: 'Medication deleted!'})
-// })
+app.delete('/api/patientspage/delete/:email', medicationController.deleteMedication, (req, res) => {
+  res.status(200).json({message: 'Medication deleted!'})
+})
 
 
 app.use((err, req, res, next) => {

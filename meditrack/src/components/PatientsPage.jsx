@@ -1,14 +1,15 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import PatientList from './PatientList';
+import {PatientContext} from './PatientContext'
 
 const PatientsPage = props => {
-    const [patientsArray, setPatientsArray] = useState([]);
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [age, setAge] = useState("");
     const [weight, setWeight] = useState("");
     const email = localStorage.getItem('email');
     const name = localStorage.getItem('firstName');
+    const {patientsArray, setPatientsArray} = useContext(PatientContext);
 
     // Obtain the User's data from the database
     useEffect( () => {
@@ -21,7 +22,7 @@ const PatientsPage = props => {
         .catch(() => console.log("got nothing"))
 
     }, []);
-    
+
     const handleAddPatient = () => {
     
         // Initialize an array 'update' to be equal to what is stored in the state patientsArray variable
@@ -60,6 +61,8 @@ const PatientsPage = props => {
     }
 
     return (
+        //declared CreateContext at the top of this component because this component is the parent of patientList, patient, and medlist, so we want to pass down the patientsarray to all of those components; 
+        //PatientContext.provider allows us to supply the state value that we want passed down. 
         <div className = 'dashboard-container' >
             <div className="patients-container">
             {patientsArray && <PatientList className="patients-list" patients = { patientsArray } handleAddPatient={handleAddPatient}></PatientList>}

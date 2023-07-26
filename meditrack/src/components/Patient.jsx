@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import MedList from './MedList';
-import { startTransition } from 'react';
+import { startTransition, useContext } from 'react';
+import {PatientContext} from './PatientContext'
 
 const Patient = ({ firstName, lastName, age, weight, medications }) => {
   const [addMeds, setAddMeds] = useState(false);
@@ -15,6 +16,8 @@ const Patient = ({ firstName, lastName, age, weight, medications }) => {
   const [checkedState, setCheckedState] = useState(
     new Array(days.length).fill(true)
   );
+  const {patientsArray, setPatientsArray} = useContext(PatientContext);
+  const refresh = () => window.location.reload(true)
 
   const handleShowMeds = (e) => {
     e.preventDefault();
@@ -25,7 +28,7 @@ const Patient = ({ firstName, lastName, age, weight, medications }) => {
       // Toggle the value of addMeds
       setAddMeds((prevAddMeds) => !prevAddMeds);
   };
-
+  
   //loop over checkedState array using map method; if the value of the passed position parameter matches with the current index, then we reverse its value. 
   const handleOnChange = (position) => {
     const updatedCheckState = checkedState.map((item, index) => 
@@ -52,7 +55,36 @@ const Patient = ({ firstName, lastName, age, weight, medications }) => {
   const daysArrays = daysMedicine(updatedCheckState); 
   const selectedDays = daysString(daysArrays);
   setWeek(selectedDays);
-};
+  };
+
+  //deleting patient
+  const handleDeletePatient = (fName, lName) => {
+    //we passed in the first and last name of the patient 
+    //we have access to the patientArray that holds all of the patients. 
+    //send a fetch request to deletePatient
+    //'/api/dashboard/delete/:firstName'
+    //     //how do i handle state when deleting? should this delete button be moved somehow to a component that makes more sense? but then how would i know which medicine it's associated with? How can i pass in props???
+    const email = localStorage.getItem('email');
+    const firstName = fName;
+    const lastName = lName; 
+  
+    fetch(`/api/dashboard/delete/${firstName}`, {
+              method: 'DELETE',
+              headers: {
+                  'Content-type': 'application/json'
+              },
+              body: JSON.stringify({ firstName, lastName, email})
+          })
+          .then((response) => response.json()) 
+          .then((data) => {
+              console.log(data);
+              console.log(`Patient ${firstName} ${lastName} has been deleted!`)
+              setPatientsArray(data);
+              refresh();
+          })
+          // .then(data => console.log("log" ,data))
+          .catch(() => console.log("Could not delete patient."))
+    }
 
   const handleAddMed = () => {
     
@@ -112,7 +144,7 @@ const Patient = ({ firstName, lastName, age, weight, medications }) => {
     setFrequency('');
     setDirections('');
   };
-
+  
   return (
     <div className="patient">
       <h4>
@@ -125,11 +157,14 @@ const Patient = ({ firstName, lastName, age, weight, medications }) => {
         {showMeds ? 'Hide Medications' : 'Show Medications'}
       </button>
       {/* If showMeds is true, then render a MedList component */}
-      {showMeds && <MedList key={medListKey} medications={medications} firstName={firstName}/>}
+      {showMeds && <MedList key={medListKey} medications={medications} firstName={firstName} lastName={lastName}/>}
       <br />
       <button className="add-med" onClick={handleAddClick}>
         {addMeds ? 'Hide Add Medications' : 'Add Medications'}  
       </button>
+      <br/>
+      <button className="del-patient" onClick={() => handleDeletePatient(firstName, lastName)}> Delete Patient
+        </button>
       {addMeds && (
         // Updating this form-container to include start date, dosage - add units?, days of the week taking it, frequency per day (turn into dropdown?), specific times to take the medication 
         <div className="form-container">

@@ -39,13 +39,13 @@ const dashboardController = {
     //     })
     // },
 
-    // async deletePatient(req, res, next) {
-    //   const { firstName } = req.params;
-    //   const data = await Patient.deleteOne({ firstName: firstName}); // returns {deletedCount: 1}
-    //   console.log(data)
-    //   if (data.deletedCount === 0) return next(400);
-    //   if (data) return next();
-    // },
+//     async deletePatient(req, res, next) {
+//       const { firstName, lastName } = req.body;
+//       const data = await Patient.deleteOne({ firstName: firstName, lastName: lastName}); // returns {deletedCount: 1}
+//       console.log(data)
+//       if (data.deletedCount === 0) return next(400);
+//       if (data) return next();
+//     },
 };
 
 module.exports = { dashboardController }

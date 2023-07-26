@@ -35,11 +35,42 @@ const dashboardController = {
     },
 
     async deletePatient(req, res, next) {
-      const { firstName } = req.params;
-      const data = await Patient.deleteOne({ firstName: firstName}); // returns {deletedCount: 1}
-      console.log(data)
-      if (data.deletedCount === 0) return next(400);
-      if (data) return next();
+      const { firstName, lastName, email } = req.body;
+
+      try {
+        const user = await User.findOne({email});
+
+        if (!user) {
+          throw new Error ('Patient not found');
+        }
+      
+      // Find the patient in the user's patients array
+      const patientIndex = user.patients.findIndex(
+        (patient) => patient.firstName === firstName && patient.lastName === lastName
+      );
+
+      if (patientIndex === -1) {
+        console.log('Patient could not be found.');
+        return next();
+      }
+
+      // Remove the patient from the patients array using splice
+      await User.updateOne(
+        { _id: user._id },
+        { $pull: { patients: { firstName: firstName, lastName: lastName } } }
+      );
+      
+      const updatedUser = await user.save();
+      
+      const newPatientsArray = updatedUser.patients; 
+      // console.log(newPatientsArray);
+      res.json(newPatientsArray);
+      } 
+
+      catch (error) {
+        console.error('Error:', error);
+        res.status(500).json({ error: 'Server error' });
+      }
     },
 };
 
