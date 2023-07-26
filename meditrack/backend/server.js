@@ -49,6 +49,9 @@ app.get(
   }
 );
 
+app.post('/api/dashboard/email',)
+
+
 app.post("/api/signup", userController.createUser, (req, res) => {
   console.log("attempted to create user");
   res.status(200).json(res.locals.newUser);
@@ -112,6 +115,7 @@ app.get("/api/doctor", userController.getDoctors, (req, res) => {
 app.post("/api/doctor", userController.createDoctor, (req, res) => {
   res.status(200).json({ message: "Doctor created!" });
 });
+
 
 // function sendTextMessage() {
 //   client.message.create({

@@ -16,9 +16,10 @@ const PatientCalendar = props => {
   const [selectedEvents, setSelectedEvents] = useState([]);
   const [patientsArray, setPatientsArray] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState([]);
-
+  // const [email, setEmail] = useState('');
   // Request User's data from the database
   useEffect( () => {
+    // setEmail(localStorage.getItem('email'));
     const email = localStorage.getItem('email');
     fetch(`/api/dashboard/${email}`)
     .then((data) => data.json()) 
@@ -70,6 +71,7 @@ const PatientCalendar = props => {
   
 
   function handleAddEvent() {
+    const email = localStorage.getItem('email');
     if (!newEvent.title || !newEvent.start) {
       return;
     }
@@ -79,7 +81,7 @@ const PatientCalendar = props => {
       medication: newEvent.title,
       date: newEvent.start,
     };
-  
+    console.log(eventPayload);
     // Update allEvents
     setAllEvents([...allEvents, newEvent]);
   
@@ -89,26 +91,18 @@ const PatientCalendar = props => {
       start: newEvent.start,
       patientFirstName: selectedPatient.firstName,
     }]);
-  
-    const email = localStorage.getItem('email');
     
-    // Update the patientsArray state variable
-    // setPatientsArray(...update);
     
     // Initialize temp variable to send to backend to update the User's document
     let update = [...patientsArray];
-    fetch(`/api/dashboard/${email}`)
-      .then((data) => data.json())
-      .then((data) => {
-        update = [...data.patients];
-        for (let i = 0; i < update.length; i++) {
-          if (update[i].firstName === selectedPatient.firstName) {
-            update[i].medicationLog.push(eventPayload);
-          }
-        }
-      });
-        console.log('update', update);
+    console.log('update before fetch', update)
+    for (let i = 0; i < update.length; i++) {
+      if (update[i].firstName === selectedPatient.firstName) {
+        update[i].medicationLog.push(eventPayload);
+      }
+    }
 
+      
     // Send the update to the backend
     fetch('/api/dashboard/patient', {
       method: 'POST',
@@ -126,9 +120,45 @@ const PatientCalendar = props => {
       });
   };
   
+// Function to handle event deletion
+const handleDeleteEvent = (eventToDelete) => {
+  const email = localStorage.getItem('email');
+  let patients = JSON.parse(JSON.stringify(patientsArray)); //this is update
+  let patient;
+  for (let i = 0; i < patients.length; i++) {
+    if (patients[i].firstName === eventToDelete.patientFirstName) {
+      patient = patients[i];
+      const updatedMedicationLog = patient.medicationLog.filter(
+        (event) => event._id !== eventToDelete._id
+        //WHAT UNIQUE IDENTIFIERS ARE THERE BETWEEN THE EVENT AND MEDICATION LOGS???
+      );
+      patient.medicationLog = updatedMedicationLog;
+      break;
+      }
+    patients[i] = patient;
+  }
+  fetch(`/api/dashboard/${email}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      patients
+    }),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Failed to delete event from the database.");
+      }
+      // Update the allEvents state after the successful DELETE request.
+      const updatedEvents = allEvents.filter((event) => event !== eventToDelete);
+      setAllEvents(updatedEvents);
 
-  
-    
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+}; 
   return (
     <div className="med-calendar-container" style={{minHeight: "87vh"}}>
       <h1>Medicine Dosage Log</h1>
@@ -166,8 +196,17 @@ const PatientCalendar = props => {
                 dateFormat="Pp"
                 style={{ marginRight: "10px", marginBottom: "10px" }}
                 selected={newEvent.start}
-                onChange={(start) => setNewEvent({ ...newEvent, start })}
-              />
+                onChange={(start) => 
+                  setNewEvent({ ...newEvent, start })
+                //   .fetch(`/api/adduserevents/${email}`, {
+                //     method: "POST",                    // declares HTTP request method
+                //     headers: {
+                //       "Content-Type": "application/json"    // declares format of data
+                //     },
+                //     body: JSON.stringify(newEvent)
+                // })
+                    }
+                />
             </div>
             <button className="med-cal-btn" style={{ marginTop: "10px" }} onClick={handleAddEvent}>Add Event</button>
           </div>
@@ -179,7 +218,23 @@ const PatientCalendar = props => {
         events={selectedEvents}
         startAccessor="start"
         endAccessor="start"
-        style={{ height: 500, margin: "50px" }}
+        style={{ 
+          height: 500, 
+          margin: "50px",
+          // '.rbc-btn-group': {
+          //   display: 'inline',
+          //   whiteSpace: 'nowrap',
+          // } 
+        }}
+        components={{
+          // Customize the rendering of each event in the calendar
+          event: ({ event }) => (
+            <div>
+              <span>{event.title}</span>
+              <button onClick={() => handleDeleteEvent(event)}>Delete</button>
+            </div>
+          ),
+        }}
       />
     </div>
   );
