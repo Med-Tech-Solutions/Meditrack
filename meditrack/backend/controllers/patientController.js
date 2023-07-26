@@ -5,21 +5,23 @@ const { Medication, Patient, User } = require("../models/models");
 // create put method to update  a patient in a user
 const dashboardController = {
   async createPatient(req, res, next) {
-      console.log(req.body);
-      const { update, email } = req.body;
-      console.log('entered create patient')  
-      //add try -catch for error handling JB
-      try{
-        await User.findOneAndUpdate(
-            {email: email },
-              {patients: update} ,
-            { new: true })
-          return next();
-      }
-      catch(err){
-        return next({err : `Error creating a new patient, ${err}`});
-      }    
-    },
+
+    console.log(req.body);
+    const { update, email } = req.body;
+    console.log("entered create patient");
+    //add try -catch for error handling JB
+    try {
+
+      await User.findOneAndUpdate(
+        { email: email },
+        { patients: update },
+        { new: true }
+      );
+      return next();
+    } catch (err) {
+      return next({ err: `Error creating a new patient, ${err}` });
+    }
+  },
 
   // async getPatient(req, res, next) {
   //     const { firstName } = req.params;

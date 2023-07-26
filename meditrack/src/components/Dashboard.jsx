@@ -1,7 +1,10 @@
+
 import React, {useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { dateFnsLocalizer } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
+import { useNavigate } from "react-router-dom";
+
 import Cookies from "js-cookie";
 
 import DashCalendar from './DashCalendar';
@@ -18,16 +21,17 @@ const Dashboard = props => {
   const [selectedEvents, setSelectedEvents] = useState([]);
   const [patientsArray, setPatientsArray] = useState([]);
 
+
   const navigate = useNavigate();
 
   // name is for "Welcome, user message on Dashboard" -AG
   const name = Cookies.get("name");
   const email = Cookies.get("email");
 
-
   // Obtain the User's data from the database
   useEffect(() => {
     console.log("==== email", email);
+
 
     if (!email) {
       navigate("/login");
@@ -58,6 +62,7 @@ const Dashboard = props => {
         setAllEvents(events);
     })
     .catch(() => console.log("got nothing"))
+
 
 }, []);
 
@@ -134,6 +139,7 @@ const handleDeleteEvent = (eventToDelete) => {
       localizer,
       handlePatientSelection,
       handleDeleteEvent
+
   };
 
     return (

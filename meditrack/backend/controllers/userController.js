@@ -185,7 +185,7 @@ const userController = {
         //   message: { err: "No token. User is not logged in" },
         // });
         res.locals.loggedin = false;
-        console.log(res.locals.loggedin);
+
         return next();
       }
 
