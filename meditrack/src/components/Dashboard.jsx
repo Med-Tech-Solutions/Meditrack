@@ -4,7 +4,6 @@ import { format, parse, startOfWeek, getDay } from 'date-fns';
 
 import DashCalendar from './DashCalendar';
 import DashPatient from './DashPatient';
-import Patient from './Patient';
 
 const Dashboard = props => {
   const events = [
@@ -12,16 +11,14 @@ const Dashboard = props => {
   ];
 
 
-  const [newEvent, setNewEvent] = useState({ title: "", start: null });
   const [allEvents, setAllEvents] = useState(events);
   const [selectedEvents, setSelectedEvents] = useState([]);
   const [patientsArray, setPatientsArray] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(new Date());
-  const [email, setEmail] = useState('');
+
   // Request User's data from the database
   useEffect( () => {
-    setEmail(localStorage.getItem('email'));
+    const email = localStorage.getItem('email')
     fetch(`/api/dashboard/${email}`)
     .then((data) => data.json()) 
     .then((data) => {
@@ -69,77 +66,22 @@ const Dashboard = props => {
     // Update the selectedEvents state variable with the newly initialized array
     setSelectedEvents(filteredEvents);
   };
-
-  // function handleAddEvent() {
-  //   if (!newEvent.title || !newEvent.start) {
-  //     return;
-  //   }
-  
-  //   // Package data that will be sent to the backend in an update
-  //   const eventPayload = {
-  //     medication: newEvent.title,
-  //     date: newEvent.start,
-  //   };
-  
-  //   // Update allEvents
-  //   setAllEvents([...allEvents, newEvent]);
-  
-  //   // Update selectedEvents
-  //   setSelectedEvents([...selectedEvents, {
-  //     title: newEvent.title,
-  //     start: newEvent.start,
-  //     patientFirstName: selectedPatient.firstName,
-  //   }]);
-  
-  //   // const email = localStorage.getItem('email');
-    
-  //   // Update the patientsArray state variable
-  //   // setPatientsArray(...update);
-    
-  //   // Initialize temp variable to send to backend to update the User's document
-  //   let update = [...patientsArray];
-  //   fetch(`/api/dashboard/${email}`)
-  //     .then((data) => data.json())
-  //     .then((data) => {
-  //       update = [...data.patients];
-  //       for (let i = 0; i < update.length; i++) {
-  //         if (update[i].firstName === selectedPatient.firstName) {
-  //           update[i].medicationLog.push(eventPayload);
-  //         }
-  //       }
-  //     });
-  //       console.log('update', update);
-
-  //   // Send the update to the backend
-  //   fetch('/api/dashboard/patient', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json'
-  //     },
-  //     body: JSON.stringify({ email, update })
-  //   })
-  //     .then(response => response.json())
-  //     .then(data => {
-  //       setNewEvent({ title: '', start: null });
-  //     })
-  //     .catch(error => {
-  //       console.error("Could not process POST request");
-  //     });
-  // };
   
 // Function to handle event deletion
 const handleDeleteEvent = (eventToDelete) => {
-  let patients = patientsArray;
-  let patient; //this is our update
+  const email = localStorage.getItem('email');
+  let patients = JSON.parse(JSON.stringify(patientsArray)); //this is update
+  let patient;
   for (let i = 0; i < patients.length; i++) {
     if (patients[i].firstName === eventToDelete.patientFirstName) {
-      patient = patients[i]
-      for (let j = 0; j < patient.medicationLog.length; j ++) {
-        if (patient.medicationLog[j] === eventToDelete) {
-          patient.medicationLog.splice(eventToDelete);
-        }
+      patient = patients[i];
+      const updatedMedicationLog = patient.medicationLog.filter(
+        (event) => event._id !== eventToDelete._id
+        //WHAT UNIQUE IDENTIFIERS ARE THERE BETWEEN THE EVENT AND MEDICATION LOGS???
+      );
+      patient.medicationLog = updatedMedicationLog;
+      break;
       }
-    }
     patients[i] = patient;
   }
   fetch(`/api/dashboard/${email}`, {
@@ -148,7 +90,7 @@ const handleDeleteEvent = (eventToDelete) => {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      patient
+      patients
     }),
   })
     .then((response) => {
@@ -167,19 +109,14 @@ const handleDeleteEvent = (eventToDelete) => {
 
     const dashCalendarProps = {
       events,
-      newEvent,
       allEvents,
       selectedEvents,
       patientsArray,
       selectedPatient,
-      selectedDate,
       localizer,
       handlePatientSelection,
-      // handleAddEvent,
       handleDeleteEvent
   };
-
-
 
     return (
       <div className = 'dashboard-container' >
@@ -208,7 +145,7 @@ const handleDeleteEvent = (eventToDelete) => {
           </div>
           <DashCalendar 
               localizer={localizer}
-              events={allEvents} // Pass the allEvents array to populate the calendar with events
+              events={selectedEvents} // Pass the allEvents array to populate the calendar with events
               {...dashCalendarProps}
               
           />

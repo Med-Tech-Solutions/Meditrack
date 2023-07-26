@@ -16,10 +16,11 @@ const PatientCalendar = props => {
   const [selectedEvents, setSelectedEvents] = useState([]);
   const [patientsArray, setPatientsArray] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState([]);
-  const [email, setEmail] = useState('');
+  // const [email, setEmail] = useState('');
   // Request User's data from the database
   useEffect( () => {
-    setEmail(localStorage.getItem('email'));
+    // setEmail(localStorage.getItem('email'));
+    const email = localStorage.getItem('email');
     fetch(`/api/dashboard/${email}`)
     .then((data) => data.json()) 
     .then((data) => {
@@ -70,6 +71,7 @@ const PatientCalendar = props => {
   
 
   function handleAddEvent() {
+    const email = localStorage.getItem('email');
     if (!newEvent.title || !newEvent.start) {
       return;
     }
@@ -79,7 +81,7 @@ const PatientCalendar = props => {
       medication: newEvent.title,
       date: newEvent.start,
     };
-  
+    console.log(eventPayload);
     // Update allEvents
     setAllEvents([...allEvents, newEvent]);
   
@@ -90,22 +92,16 @@ const PatientCalendar = props => {
       patientFirstName: selectedPatient.firstName,
     }]);
     
-    // Update the patientsArray state variable
-    // setPatientsArray(...update);
     
     // Initialize temp variable to send to backend to update the User's document
     let update = [...patientsArray];
-    fetch(`/api/dashboard/${email}`)
-      .then((data) => data.json())
-      .then((data) => {
-        update = [...data.patients];
-        for (let i = 0; i < update.length; i++) {
-          if (update[i].firstName === selectedPatient.firstName) {
-            update[i].medicationLog.push(eventPayload);
-          }
-        }
-      });
-        console.log('update', update);
+    console.log('update before fetch', update)
+    for (let i = 0; i < update.length; i++) {
+      if (update[i].firstName === selectedPatient.firstName) {
+        update[i].medicationLog.push(eventPayload);
+      }
+    }
+
       
     // Send the update to the backend
     fetch('/api/dashboard/patient', {
@@ -126,6 +122,7 @@ const PatientCalendar = props => {
   
 // Function to handle event deletion
 const handleDeleteEvent = (eventToDelete) => {
+  const email = localStorage.getItem('email');
   let patients = JSON.parse(JSON.stringify(patientsArray)); //this is update
   let patient;
   for (let i = 0; i < patients.length; i++) {

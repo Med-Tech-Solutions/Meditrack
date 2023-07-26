@@ -14,7 +14,6 @@ const dashboardController = {
               {email: email },
                {patients: update} ,
               { new: true })
-            
             return next();
           
       },
