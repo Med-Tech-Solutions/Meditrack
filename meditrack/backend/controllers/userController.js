@@ -185,6 +185,7 @@ const userController = {
         //   message: { err: "No token. User is not logged in" },
         // });
         res.locals.loggedin = false;
+
         return next();
       }
 
@@ -230,6 +231,10 @@ const userController = {
 
   async getPatients(req, res, next) {
     const { email } = req.params;
+    if (res.locals.loggedin === false) {
+      res.locals.user = false
+      return next();
+    }
     User.findOne({ email: email }).then((user) => {
       if (!user)
         return next({ err: "Error in userModel.getuser: Could not find user" });

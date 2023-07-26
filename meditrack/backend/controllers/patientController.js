@@ -5,6 +5,7 @@ const { Medication, Patient, User } = require("../models/models");
 // create put method to update  a patient in a user
 const dashboardController = {
   async createPatient(req, res, next) {
+
     console.log(req.body);
     const { update, email } = req.body;
     console.log("entered create patient");
