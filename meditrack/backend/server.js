@@ -72,17 +72,12 @@ app.delete("/api/delete/:email", userController.deleteUser, (req, res) => {
   res.status(200).json({ message: "User deleted!" });
 });
 
-//Routes for patient
+// logout
+// app.use("api/logout", userController.logout, (req, res) => {
+//   return res.status(200).json({ message: "User is logged out" });
+// });
 
-app.get(
-  "/api/dashboard/getEmail",
-  userController.checkSession,
-  userController.createSession,
-  userController.getEmail,
-  (req, res) => {
-    return res.status(200).json(res.locals.email);
-  }
-);
+//Routes for patient
 
 app.post(
   "/api/dashboard/patient",

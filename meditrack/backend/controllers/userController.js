@@ -128,7 +128,14 @@ const userController = {
         maxAge: 1000 * 60 * 30,
       });
 
-      
+      const firstName = res.locals.user.firstName;
+      res.cookie("name", firstName, {
+        withCredentials: true,
+        httpOnly: false,
+        // maxAge is in milliseconds
+        maxAge: 1000 * 60 * 30,
+      });
+
       // logic to create session from when the user was authenticated
 
       // const expDate = Date.now();
@@ -215,22 +222,11 @@ const userController = {
     }
   },
 
-  async getEmail(req, res, next) {
-    try {
-      if (res.locals.loggedin === true) {
-        res.locals.email = req.cookies.email;
-        return next();
-      } else {
-        return next();
-      }
-    } catch (err) {
-      return next({
-        log: "Express error handler caught middleware error in getEmail",
-        status: 400,
-        message: { err: `An error occurred in getEmail, error: ${err}` },
-      });
-    }
-  },
+  // async logout(req, res, next) {
+  //   const email = req.cookie.email;
+  //   const token = req.cookies.token;
+  //   const name = req.cookie.name;
+  // },
 
   async getPatients(req, res, next) {
     const { email } = req.params;

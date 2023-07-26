@@ -11,19 +11,18 @@ const Dashboard = (props) => {
   const [weight, setWeight] = useState("");
 
   const navigate = useNavigate();
-  // const email = localStorage.getItem("email");
-  const name = localStorage.getItem("firstName");
+
+  // name is for "Welcome, user message on Dashboard" -AG
+  const name = Cookies.get("name");
+  const email = Cookies.get("email");
 
   // Obtain the User's data from the database
   useEffect(() => {
-    // const email = localStorage.getItem("email");
-    const email = Cookies.get('email');
     console.log("==== email", email);
 
     if (email === "") {
       navigate("/login");
     }
-
 
     fetch(`/api/dashboard/${email}`)
       .then((data) => {
@@ -42,7 +41,6 @@ const Dashboard = (props) => {
   }, []);
 
   const handleAddPatient = () => {
-    const email = Cookies.get("email");
     // Initialize an array 'update' to be equal to what is stored in the state patientsArray variable
     let update = [...patientsArray];
 
@@ -89,7 +87,6 @@ const Dashboard = (props) => {
   };
 
   const reloadPatients = () => {
-    const email = Cookies.get("email");
     fetch(`/api/dashboard/${email}`)
       .then((data) => data.json())
       .then((data) => {
