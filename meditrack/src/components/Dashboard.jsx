@@ -1,28 +1,46 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { dateFnsLocalizer } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
+import Cookies from "js-cookie";
 
 import DashCalendar from './DashCalendar';
 import DashPatient from './DashPatient';
 
 const Dashboard = props => {
   const events = [
+
   
   ];
 
-
+  const [selectedPatient, setSelectedPatient] = useState([]);
   const [allEvents, setAllEvents] = useState(events);
   const [selectedEvents, setSelectedEvents] = useState([]);
   const [patientsArray, setPatientsArray] = useState([]);
-  const [selectedPatient, setSelectedPatient] = useState([]);
 
-  // Request User's data from the database
-  useEffect( () => {
-    const email = localStorage.getItem('email')
+  const navigate = useNavigate();
+
+  // name is for "Welcome, user message on Dashboard" -AG
+  const name = Cookies.get("name");
+  const email = Cookies.get("email");
+
+
+  // Obtain the User's data from the database
+  useEffect(() => {
+    console.log("==== email", email);
+
+    if (!email) {
+      navigate("/login");
+    }
+
     fetch(`/api/dashboard/${email}`)
     .then((data) => data.json()) 
     .then((data) => {
+      console.log(data);
       // Update the state patientsArray variable with the User's patientsArray property
+      if (data === false) {
+        navigate("/login"); 
+      }
         setPatientsArray(data.patients);
         // Store an events array full of the medication logs of each patient
         const events = data.patients.reduce((acc, patient) => {
@@ -223,11 +241,6 @@ export default Dashboard;
     // }
 
 
-
-
-
-
-
     // return (
     //     <div className = 'patient-add' >
     //         <DashCalendar />
@@ -274,4 +287,41 @@ export default Dashboard;
     //     </div>
     // );
 
+
+
+
+
+// // Send the updated data to the backend to be added to the patched to the
+// fetch(`/api/dashboard/patient`, {
+//   method: "POST",
+//   credentials: "include",
+//   headers: {
+//     "Content-type": "application/json",
+//   },
+//   body: JSON.stringify({ email, update }),
+// })
+//   .then((data) => {
+//     return data.json();
+//     // reloadPatients();
+//   })
+//   .then((data) => {
+//     console.log("======= handlePatient: ", data);
+//     // if data is undefined, then reload patients and don't do update
+//     if (data === false) {
+//       navigate("/login");
+//     } else {
+//       // Push relevant state variables to the update array
+//       update.push({
+//         firstName,
+//         lastName,
+//         age,
+//         weight,
+//       });
+//       reloadPatients();
+//     }
+//   })
+//   .catch((error) => {
+//     console.error("Error: in dashboard post request", error);
+//   });
+// };
 

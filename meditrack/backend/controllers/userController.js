@@ -74,6 +74,7 @@ const userController = {
           if (await bcrypt.compare(password, user.password)) {
             // add logic to check password
             res.locals.user = user;
+            res.locals.loggedin = true;
             next();
           } else {
             next({
@@ -100,6 +101,10 @@ const userController = {
   async createSession(req, res, next) {
     // get user from res.locals set in checkSession
     try {
+      if (res.locals.loggedin === false) {
+        return next();
+      }
+
       const userEmail = res.locals.user.email;
       const hashedStr = crypto.randomBytes(15).toString("hex");
 
@@ -111,14 +116,22 @@ const userController = {
       // this essentialy refreshed the tokens
       res.cookie("token", token, {
         withCredentials: true,
-        httpOnly: true,
+        httpOnly: false,
         // maxAge is in milliseconds
         maxAge: 1000 * 60 * 30,
       });
 
       res.cookie("email", userEmail, {
         withCredentials: true,
-        httpOnly: true,
+        httpOnly: false,
+        // maxAge is in milliseconds
+        maxAge: 1000 * 60 * 30,
+      });
+
+      const firstName = res.locals.user.firstName;
+      res.cookie("name", firstName, {
+        withCredentials: true,
+        httpOnly: false,
         // maxAge is in milliseconds
         maxAge: 1000 * 60 * 30,
       });
@@ -158,58 +171,70 @@ const userController = {
 
   // check session
   async checkSession(req, res, next) {
-    // try {
-    const email = req.cookies.email;
-    const token = req.cookies.token;
+    try {
+      console.log("====== Hitting checkSession");
+      // try {
+      const email = req.cookies.email;
+      const token = req.cookies.token;
 
-    if (!token) {
-      // return next({
-      //   log: "Express error handler caught unknown middleware error",
-      //   status: 400,
-      //   message: { err: "No token. User is not logged in" },
-      // });
-      return res.json({ status: false });
-    }
-
-    const dateNow = new Date();
-
-    // get user session from database and check if it is expired
-    const userSession = await User.findOne({ email: email });
-    const expireDate = userSession.expiration;
-    // were going to use cookie.token to see if user is authenticated
-    await jwt.verify(token, process.env.ACCESS_TOKEN, (err, token) => {
-      if (err) {
-        // return next(err);
-        return res.status(401).json({ status: false });
+      if (!token || !email || (!token && !email)) {
+        console.log("======= no token check");
+        // return next({
+        //   log: "Express error handler caught unknown middleware error",
+        //   status: 400,
+        //   message: { err: "No token. User is not logged in" },
+        // });
+        res.locals.loggedin = false;
+        console.log(res.locals.loggedin);
+        return next();
       }
-      // saving entire user object
-      res.locals.user = userSession;
-    });
 
-    // compare our expiration dates current time vs created time
-    // session has expired
-    if (dateNow.getTime() > expireDate) {
-      return res.json({ status: false });
-      // return next({
-      //   log: "Express error handler caught unknown middleware error",
-      //   status: 400,
-      //   message: { err: "Token is expired, need to log in" },
-      // });
+      const dateNow = new Date();
+
+      // get user session from database and check if it is expired
+      const userSession = await User.findOne({ email: email });
+      const expireDate = userSession.expiration;
+      // were going to use cookie.token to see if user is authenticated
+      await jwt.verify(token, process.env.ACCESS_TOKEN, (err, token) => {
+        if (err) {
+          // return next(err);
+          res.locals.loggedin = false;
+          return next();
+        }
+        // saving entire user object
+        res.locals.user = userSession;
+      });
+
+      // compare our expiration dates current time vs created time
+      // session has expired
+      if (dateNow.getTime() > expireDate) {
+        res.locals.loggedin = false;
+        return next();
+      }
+      // passing to next middleware essentially refreshes session
+      res.locals.loggedin = true;
+      next();
+    } catch (err) {
+      return next({
+        log: "Express error handler caught middleware error in checkSession",
+        status: 400,
+        message: { err: `An error occurred in checkSession, error: ${err}` },
+      });
     }
-    // passing to next middleware essentially refreshes session
-    next();
-    // } catch (err) {
-    // return next({
-    //   log: "Express error handler caught unknown middleware error",
-    //   status: 400,
-    //   message: { err: `An error occurred in checkSession, error: ${err}` },
-    // });
-    // }
-    // after we verify token is good we need to verify user is who they are
   },
+
+  // async logout(req, res, next) {
+  //   const email = req.cookie.email;
+  //   const token = req.cookies.token;
+  //   const name = req.cookie.name;
+  // },
 
   async getPatients(req, res, next) {
     const { email } = req.params;
+    if (res.locals.loggedin === false) {
+      res.locals.user = false
+      return next();
+    }
     User.findOne({ email: email }).then((user) => {
       if (!user)
         return next({ err: "Error in userModel.getuser: Could not find user" });
