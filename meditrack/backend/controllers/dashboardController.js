@@ -6,14 +6,20 @@ const { Medication, Patient, User } = require('../models/models');
 const dashboardController = {
 
     async createPatient(req, res, next) {
-        console.log(req.body);
+        if (res.locals.loggedin === false) {
+          return next();
+        }
+
+        console.log("====== dashboardController.createPatient: ", req.body);
         const { update, email } = req.body;
         console.log('entered create patient')  
         
-           await User.findOneAndUpdate(
-              {email: email },
-               {patients: update} ,
-              { new: true })
+      
+          await User.findOneAndUpdate(
+            { email: email },
+            { patients: update },
+            { new: true }
+          );
             
             return next();
           

@@ -210,10 +210,11 @@ body {
 .footer {
   /* position: fixed; */
   z-index: -1;
+  position: absolute;
   /* position: static; */
   width: 100%;
   margin-top: auto;
-  /* bottom: 0; */
+  bottom: 0;
   /* left: 0; */
   /* margin-top: 20px; */
 }
@@ -408,7 +409,9 @@ body {
 
 ======================================================================================================================================================
 */
-
+/* .rbc-btn-group > button {
+  display: none;
+}  */
 .select-patient-header {
   font-size: 24px;
   font-weight: bold;
@@ -684,8 +687,8 @@ button.rbc-input::-moz-focus-inner {
   border-color: #adadad;
 }
 
-.rbc-btn-group {
-  display: inline-block;
+.rbc-btn-group { 
+  display: inline;
   white-space: nowrap;
 }
 .rbc-btn-group > button:first-child:not(:last-child) {
