@@ -12,7 +12,8 @@ import Diagnostic from './components/Diagnostic';
 import DoctorCalendar from './components/DoctorCalendar';
 import PatientCalendar from './components/PatientCalendar';
 import ScheduleReminders from './components/ScheduleReminders';
-import PatientsPage from './components/PatientsPage';
+import PatientsPage from './components/PatientsPage'
+import SideNav from './components/SideNav';
 
 /*
 ====================================
@@ -26,18 +27,18 @@ function App() {
     <div className="App">
       <header className="App-header">
         <Navbar />
-        <Routes>
-          <Route exact path ="/" element={<Home />}></Route>
-          <Route path="/signup" element={<Signup />}></Route>
-          <Route path="/login" element={<Login />}></Route>
-          <Route path="/dashboard" element={<Dashboard />}></Route>
-          <Route path="/about" element={<About />}></Route>
-          <Route path="/doccal" element={<DoctorCalendar />}></Route>
-          <Route path="/patientcal" element={<PatientCalendar />}></Route>
-          <Route path="/dse" element={<Diagnostic />}></Route>
-          <Route path="/schedule" element={<ScheduleReminders/>}></Route>
-          <Route path="/patients" element={<PatientsPage />}></Route>
-        </Routes>
+          <Routes>
+            <Route exact path ="/" element={<Home />}></Route>
+            <Route path="/signup" element={<Signup />}></Route>
+            <Route path="/login" element={<Login />}></Route>
+            <Route path="/dashboard" element={<Dashboard />}></Route>
+            <Route path="/about" element={<About />}></Route>
+            <Route path="/doccal" element={<DoctorCalendar />}></Route>
+            <Route path="/patientcal" element={<PatientCalendar />}></Route>
+            <Route path="/dse" element={<Diagnostic />}></Route>
+            <Route path="/schedule" element={<ScheduleReminders/>}></Route>
+            <Route path="/patients" element={<PatientsPage />}></Route>
+          </Routes>
         <Footer />
       </header>
     </div>

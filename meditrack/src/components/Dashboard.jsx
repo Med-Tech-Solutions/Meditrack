@@ -1,6 +1,5 @@
 
 import React, {useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { dateFnsLocalizer } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import { useNavigate } from "react-router-dom";
@@ -157,12 +156,13 @@ const handleDeleteEvent = (eventToDelete) => {
 
   };
 
+
     return (
       <div className = 'dashboard-container' style={{
         display: 'flex',
         flexDirection: 'column',
-
       }}>
+        <h1 className="name">Hi {name}!</h1>
         <section className='dashboard-calendar' style={{
           marginLeft:'35%',
           marginRight:'35%',
@@ -185,21 +185,14 @@ const handleDeleteEvent = (eventToDelete) => {
               ))}
             </select>
           </div>
-          <DashCalendar 
-              localizer={localizer}
-              events={selectedEvents} // Pass the selectedEvents array to populate the calendar with events
-              {...dashCalendarProps}
-              
-          />
-          </section>
-        {/* <section className="dash-lists" style={{
-          display:'flex',
-          marginLeft:'20%',
-          marginRight:'20%'
-        }}>
-          <DashPatient />
-        </section> */}
-        
+          <div className='dashcalendar'>
+            <DashCalendar   
+                localizer={localizer}
+                events={selectedEvents} // Pass the selectedEvents array to populate the calendar with events
+                {...dashCalendarProps}  
+            />
+          </div>
+          </section>       
       </div>
     );
   }
