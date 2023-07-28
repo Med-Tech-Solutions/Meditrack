@@ -300,6 +300,7 @@ const userController = {
     await Doctor.find().then((data) => (res.locals.doctors = data));
     next();
   },
+
 };
 
 module.exports = { userController };
