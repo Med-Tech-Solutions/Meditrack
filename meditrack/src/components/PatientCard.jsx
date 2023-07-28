@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import MedList from './MedList';
 import { startTransition, useContext } from 'react';
-import {PatientContext} from './PatientContext'
+import {PatientContext} from './PatientContext';
+import MedCard from './MedCard'
 
-const Patient = ({ firstName, lastName, age, weight, medications }) => {
+const PatientCard = ({ selectedPatient, onHidePatient, onMedClick }) => {
   const [addMeds, setAddMeds] = useState(false);
   const [name, setName] = useState('');
   const [dosage, setDosage] = useState('');
@@ -12,11 +13,16 @@ const Patient = ({ firstName, lastName, age, weight, medications }) => {
   const [directions, setDirections] = useState('');
   const [showMeds, setShowMeds] = useState(false);
   const [medListKey, setMedListKey] = useState(0);
+  //for photos?
+  const [file, setFile] = useState(null);
+//   this state variable holds the selected medicine information
+  const [selectedMedicine, setSelectedMedicine] = useState(null);
   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const [checkedState, setCheckedState] = useState(
     new Array(days.length).fill(false)
   );
   const {patientsArray, setPatientsArray} = useContext(PatientContext);
+
   const refresh = () => window.location.reload(true)
 
   const handleShowMeds = (e) => {
@@ -24,11 +30,32 @@ const Patient = ({ firstName, lastName, age, weight, medications }) => {
     setShowMeds((prevShowMeds) => !prevShowMeds);
   };
 
+  const handleHidePatient = () => {
+    // Call the onHidePatient function passed as a prop to reset the selectedPatient state to null
+    onHidePatient();
+  };
+
   const handleAddClick = () => {
       // Toggle the value of addMeds
       setAddMeds((prevAddMeds) => !prevAddMeds);
   };
-  
+
+  const handleMedClick = (medication) => {
+    onMedClick(medication);
+  };
+
+  //specifically for images
+  function handleChange(e) {
+    console.log(e.target.files);
+    setFile(URL.createObjectURL(e.target.files[0]));
+}
+
+const fileUploadHandler = () => {
+    //axios request -> post request. 
+    //post the request to a certain URL -> 
+    //create endpoint to put it into the database
+}
+
   //loop over checkedState array using map method; if the value of the passed position parameter matches with the current index, then we reverse its value. 
   const handleOnChange = (position) => {
     const updatedCheckState = checkedState.map((item, index) => 
@@ -146,26 +173,44 @@ const Patient = ({ firstName, lastName, age, weight, medications }) => {
     setDirections('');
   };
   
+  if(!selectedPatient){
+    return <div className="patient-text">Click a patient to access their information.</div>;
+  }
+
+  const { firstName, lastName, age, weight, medications } = selectedPatient; 
+  
   return (
     <div className="patient">
-      <h4>
+      <h2 id="patient-card-name">
         {firstName} {lastName}
-      </h4>
-      <p>Age: {age}</p>
-      <p>Weight: {weight}</p>
+      </h2>
+      <h3 id="patient-card-age">
+        Age: {age}
+        <br></br>
+        Weight: {weight}
+    </h3>
       <button className="show-meds" onClick={handleShowMeds}>
         {/* Conditionally renders the following string in the button */}
         {showMeds ? 'Hide Medications' : 'Show Medications'}
       </button>
       {/* If showMeds is true, then render a MedList component */}
-      {showMeds && <MedList key={medListKey} medications={medications} firstName={firstName} lastName={lastName}/>}
+      <div className="med-card-container">
+        {showMeds && <MedList key={medListKey} medications={medications} firstName={firstName} lastName={lastName} onMedClick={handleMedClick}/>}</div>
+
       <br />
       <button className="add-med" onClick={handleAddClick}>
         {addMeds ? 'Hide Add Medications' : 'Add Medications'}  
       </button>
       <br/>
+      <button className="hide-patient" onClick={() => handleHidePatient(firstName, lastName)}> Hide Patient
+        </button>
       <button className="del-patient" onClick={() => handleDeletePatient(firstName, lastName)}> Delete Patient
         </button>
+
+            <input type="file" className="image-button" onChange={handleChange} />
+            <button onClick={this.fileUploadHandler}>Upload</button>
+            <img className = "patient-image" alt="personphoto" src={file} />
+
       {addMeds && (
         // Updating this form-container to include start date, dosage - add units?, days of the week taking it, frequency per day (turn into dropdown?), specific times to take the medication 
         <div className="form-container">
@@ -263,4 +308,4 @@ const Patient = ({ firstName, lastName, age, weight, medications }) => {
   );
 };
 
-export default Patient;
+export default PatientCard;

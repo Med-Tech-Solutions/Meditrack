@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Patient from './Patient';
 
-const MedList = ({ medications, firstName, lastName }) => {
+const MedList = ({onMedClick, medications, firstName, lastName }) => {
     const refresh = () => window.location.reload(true)
 
     const [user, setUser] = useState(null);
+    // const [renderMed, setRenderMed] = useState(false);
       // Function to fetch the user data and update the state
     const fetchUserData = () => {
     const email = localStorage.getItem('email');
@@ -19,6 +20,10 @@ const MedList = ({ medications, firstName, lastName }) => {
     useEffect(() => {
     fetchUserData(); // Fetch the user data when the component mounts
   }, []);
+
+    // const toggleShow = () => {
+    //      setRenderMed(!renderMed);
+    // };
 
     const handleDeleteClick = (val) => {
     //     //how do i handle state when deleting? should this delete button be moved somehow to a component that makes more sense? but then how would i know which medicine it's associated with? How can i pass in props???
@@ -103,24 +108,44 @@ const MedList = ({ medications, firstName, lastName }) => {
 
     // }
 
-    return(
+    return (
         <div>
-            {!medications.length && <span className="no-meds">No Medications to Show</span>}
-            {(medications.length > 0) && medications.map((medication) => (
-                <div key={medication.name}>
-                    <p>Name: {medication.name}</p>
-                    <p>Weekly Overview: {medication.week}</p>
-                    <p>Dosage: {medication.dosage}</p>
-                    <p>Frequency: {medication.frequency}</p>
-                    <p>Directions: {medication.directions}</p>
-                    <button onClick={() => handleDeleteClick(medication.name)}>Delete Medication</button>
+          {!medications.length && <span className="no-meds">No Medications to Show</span>}
+          {medications.length > 0 && (
+            <div className="medication-grid">
+              {medications.map((medication) => (
+                <div key={medication.name} className="medication-item">
+                  <div className="med-name" onClick={() => onMedClick(medication)}>{medication.name}</div>
+                  <button className="delete-med" onClick={() => handleDeleteClick(medication.name)}>
+                    Delete
+                  </button>
                 </div>
-            )
-            )}
+              ))}
+            </div>
+          )}
         </div>
-    );
-}
-
+      );
+    };
+    
 export default MedList;
+//     return(
+//         <div className="med-list">
+//             {!medications.length && <span className="no-meds">No Medications to Show</span>}
+//             {(medications.length > 0) && (<div key={medication.name} className="medication-item">) medications.map((medication) => (
+//                 <div key={medication.name}>
+//                      <div id="med-name-card">{medication.name}</div>
+//                      <button id="delete-card" onClick={() => handleDeleteClick(medication.name)}>Delete Medication</button>
+//                 </div>
+//                     // {/* <p>Days to Take: {medication.week}</p>
+//                     // <p>Dosage: {medication.dosage}</p>
+//                     // <p>Frequency: {medication.frequency}</p>
+//                     // <p>Directions: {medication.directions}</p> */}
+//             )
+//             )}
+//         </div>
+//     );
+// }
 
-// onClick={handleDeleteClick}
+// export default MedList;
+
+// // onClick={handleDeleteClick}
