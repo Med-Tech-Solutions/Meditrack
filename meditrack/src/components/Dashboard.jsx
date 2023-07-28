@@ -87,38 +87,53 @@ const Dashboard = props => {
   
 // Function to handle event deletion
 const handleDeleteEvent = (eventToDelete) => {
-  const email = localStorage.getItem('email');
-  let patients = JSON.parse(JSON.stringify(patientsArray)); //this is update
+  let update = [...patientsArray]; //this is update
   let patient;
-  for (let i = 0; i < patients.length; i++) {
-    if (patients[i].firstName === eventToDelete.patientFirstName) {
-      patient = patients[i];
+  for (let i = 0; i < update.length; i++) {
+    if (update[i].firstName === eventToDelete.patientFirstName) {
+      patient = update[i];
+      console.log(patient);
+      // console.log('medicationlog id', patient.medicationLog[1]._id, eventToDelete);
       const updatedMedicationLog = patient.medicationLog.filter(
         (event) => event._id !== eventToDelete._id
         //WHAT UNIQUE IDENTIFIERS ARE THERE BETWEEN THE EVENT AND MEDICATION LOGS???
       );
+      // const updatedMedicationLog = [];
       patient.medicationLog = updatedMedicationLog;
+      update[i] = patient;
+      console.log('update before fetch', update);
       break;
       }
-    patients[i] = patient;
   }
-  fetch(`/api/dashboard/${email}`, {
+  fetch(`/api/dashboard/patient`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      patients
+      email,
+      update,
     }),
   })
     .then((response) => {
       if (!response.ok) {
         throw new Error("Failed to delete event from the database.");
       }
+      return response;
+    })
+    .then((result) => {
+      return result.json()
+    })
+    .then((result) => {
+      if (result === false) {
+        navigate('/login');
+      }
       // Update the allEvents state after the successful DELETE request.
-      const updatedEvents = allEvents.filter((event) => event !== eventToDelete);
-      setAllEvents(updatedEvents);
-
+      console.log('update after fetch', update)
+      const updatedAllEvents = allEvents.filter((event) => event !== eventToDelete);
+      const updatedSelectedEvents = selectedEvents.filter((event) => event !== eventToDelete);
+      setAllEvents(updatedAllEvents);
+      setSelectedEvents(updatedSelectedEvents);
     })
     .catch((error) => {
       console.error(error);
@@ -137,11 +152,14 @@ const handleDeleteEvent = (eventToDelete) => {
   };
 
     return (
-      <div className = 'dashboard-container' >
-        <h1>hi</h1>
+      <div className = 'dashboard-container' style={{
+        display: 'flex',
+        flexDirection: 'column',
+
+      }}>
         <section className='dashboard-calendar' style={{
-          marginLeft:'20%',
-          marginRight:'20%',
+          marginLeft:'35%',
+          marginRight:'35%',
           height:400
           }}>
           <div className='patient-select' style={{
@@ -163,18 +181,18 @@ const handleDeleteEvent = (eventToDelete) => {
           </div>
           <DashCalendar 
               localizer={localizer}
-              events={selectedEvents} // Pass the allEvents array to populate the calendar with events
+              events={selectedEvents} // Pass the selectedEvents array to populate the calendar with events
               {...dashCalendarProps}
               
           />
           </section>
-        <section className="dash-lists" style={{
+        {/* <section className="dash-lists" style={{
           display:'flex',
           marginLeft:'20%',
           marginRight:'20%'
         }}>
           <DashPatient />
-        </section>
+        </section> */}
         
       </div>
     );

@@ -12,15 +12,14 @@ const dashboardController = {
       try{
         await User.findOneAndUpdate(
             {email: email },
-              {patients: update} ,
-            { new: true })
+            {patients: update} ,
+            {new: true})
           return next();
       }
       catch(err){
         return next({err : `Error creating a new patient, ${err}`});
       }    
     },
-
   // async getPatient(req, res, next) {
   //     const { firstName } = req.params;
   //     Patient.findOne({ firstName: firstName }) //include lastName here also?
