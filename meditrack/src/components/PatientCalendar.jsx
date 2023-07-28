@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
+import { useNavigate } from 'react-router-dom';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import DatePicker from 'react-datepicker';
+import Cookies from 'js-cookie';
 
 const PatientCalendar = props => {
 
@@ -16,11 +18,19 @@ const PatientCalendar = props => {
   const [selectedEvents, setSelectedEvents] = useState([]);
   const [patientsArray, setPatientsArray] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState([]);
-  // const [email, setEmail] = useState('');
+
+  const navigate = useNavigate();
+ // name is for "Welcome, user message on Dashboard" -AG
+  const name = Cookies.get("name");
+  const email = Cookies.get("email");
+
   // Request User's data from the database
   useEffect( () => {
-    // setEmail(localStorage.getItem('email'));
-    const email = localStorage.getItem('email');
+
+    if (!email) {
+      navigate("/login");
+    }
+
     fetch(`/api/dashboard/${email}`)
     .then((data) => data.json()) 
     .then((data) => {
@@ -35,6 +45,7 @@ const PatientCalendar = props => {
               title: log.medication,
               start: new Date(log.date),
               patientFirstName: patient.firstName,
+              _id: log._id,
             }))
           );
         }, []);
@@ -71,7 +82,7 @@ const PatientCalendar = props => {
   
 
   function handleAddEvent() {
-    const email = localStorage.getItem('email');
+
     if (!newEvent.title || !newEvent.start) {
       return;
     }
@@ -101,8 +112,7 @@ const PatientCalendar = props => {
         update[i].medicationLog.push(eventPayload);
       }
     }
-
-      
+    
     // Send the update to the backend
     fetch('/api/dashboard/patient', {
       method: 'POST',
@@ -113,6 +123,9 @@ const PatientCalendar = props => {
     })
       .then(response => response.json())
       .then(data => {
+        if (data === false) {
+          navigate('/login');
+        }
         setNewEvent({ title: '', start: null });
       })
       .catch(error => {
@@ -122,43 +135,58 @@ const PatientCalendar = props => {
   
 // Function to handle event deletion
 const handleDeleteEvent = (eventToDelete) => {
-  const email = localStorage.getItem('email');
-  let patients = JSON.parse(JSON.stringify(patientsArray)); //this is update
+  let update = [...patientsArray]; //this is update
   let patient;
-  for (let i = 0; i < patients.length; i++) {
-    if (patients[i].firstName === eventToDelete.patientFirstName) {
-      patient = patients[i];
+  for (let i = 0; i < update.length; i++) {
+    if (update[i].firstName === eventToDelete.patientFirstName) {
+      patient = update[i];
+      console.log(patient);
+      // console.log('medicationlog id', patient.medicationLog[1]._id, eventToDelete);
       const updatedMedicationLog = patient.medicationLog.filter(
         (event) => event._id !== eventToDelete._id
         //WHAT UNIQUE IDENTIFIERS ARE THERE BETWEEN THE EVENT AND MEDICATION LOGS???
       );
+      // const updatedMedicationLog = [];
       patient.medicationLog = updatedMedicationLog;
+      update[i] = patient;
+      console.log('update before fetch', update);
       break;
       }
-    patients[i] = patient;
   }
-  fetch(`/api/dashboard/${email}`, {
+  fetch(`/api/dashboard/patient`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      patients
+      email,
+      update,
     }),
   })
     .then((response) => {
       if (!response.ok) {
         throw new Error("Failed to delete event from the database.");
       }
+      return response;
+    })
+    .then((result) => {
+      return result.json()
+    })
+    .then((result) => {
+      if (result === false) {
+        navigate('/login');
+      }
       // Update the allEvents state after the successful DELETE request.
-      const updatedEvents = allEvents.filter((event) => event !== eventToDelete);
-      setAllEvents(updatedEvents);
-
+      console.log('update after fetch', update)
+      const updatedAllEvents = allEvents.filter((event) => event !== eventToDelete);
+      const updatedSelectedEvents = selectedEvents.filter((event) => event !== eventToDelete);
+      setAllEvents(updatedAllEvents);
+      setSelectedEvents(updatedSelectedEvents);
     })
     .catch((error) => {
       console.error(error);
     });
-}; 
+};  
   return (
     <div className="med-calendar-container" style={{minHeight: "87vh"}}>
       <h1>Medicine Dosage Log</h1>

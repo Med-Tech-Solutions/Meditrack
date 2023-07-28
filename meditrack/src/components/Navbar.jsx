@@ -21,7 +21,7 @@ const Navbar = () => {
         Meditrack
       </Link>
       <ul>
-        <CustomLink to="/dashboard/:email">Dashboard</CustomLink>
+        <CustomLink to="/dashboard">Dashboard</CustomLink>
         <CustomLink to="/patients">Patients</CustomLink>
         <CustomLink to="/schedule">Schedule Reminders</CustomLink>
         <CustomLink to="/patientcal">Medication Calendar</CustomLink>

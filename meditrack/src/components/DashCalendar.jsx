@@ -24,7 +24,7 @@ const DashCalendar = props => {
   return (
     <div className="med-calendar-container" style={{minHeight: "87vh",marginTop: '10px'}}>
 
-      <div>
+      {/* <div>
         <select className="select-patient"
           value={selectedPatient?.firstName || ''}
           onChange={(e) => handlePatientSelection(patientsArray.find(p => p.firstName === e.target.value))}
@@ -34,9 +34,9 @@ const DashCalendar = props => {
             <option key={patient.firstName} value={patient.firstName}>{patient.firstName}</option>
           ))}
         </select>
-      </div>
+      </div> */}
   
-      {selectedPatient && selectedPatient.medications && (
+      {/* {selectedPatient && selectedPatient.medications && ( */}
         <>
           {/* <h2 className="log-meds">Log Medication</h2> */}
           {/* <div> */}
@@ -62,7 +62,7 @@ const DashCalendar = props => {
             {/* <button className="med-cal-btn" style={{ marginTop: "10px" }} onClick={handleAddEvent}>Add Event</button> */}
           {/* </div> */}
         </>
-      )}
+      {/* )} */}
   
       <Calendar
         view='day'

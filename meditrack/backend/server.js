@@ -49,7 +49,6 @@ app.get(
   }
 );
 
-app.post('/api/dashboard/email',)
 
 
 app.post("/api/signup", userController.createUser, (req, res) => {
