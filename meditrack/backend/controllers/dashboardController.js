@@ -14,10 +14,13 @@ const dashboardController = {
         const { update, email } = req.body;
         console.log('entered create patient')  
         
-           await User.findOneAndUpdate(
-              {email: email },
-               {patients: update} ,
-              { new: true })
+      
+          await User.findOneAndUpdate(
+            { email: email },
+            { patients: update },
+            { new: true }
+          );
+            
             return next();
           
       },

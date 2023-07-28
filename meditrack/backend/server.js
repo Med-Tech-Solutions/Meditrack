@@ -50,10 +50,11 @@ app.get(
 );
 
 
-app.post('/api/signup', userController.createUser, (req, res) => {
-  console.log('attempted to create user');
-    res.status(200).json(res.locals.newUser);
-})
+
+app.post("/api/signup", userController.createUser, (req, res) => {
+  console.log("attempted to create user");
+  res.status(200).json(res.locals.newUser);
+});
 
 app.post(
   "/api/login",
