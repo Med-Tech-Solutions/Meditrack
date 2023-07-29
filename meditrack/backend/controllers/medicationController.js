@@ -8,7 +8,7 @@ const medicationController = {
         if (!name || !dosage || !frequency || !directions)
             return res.status(400).json({ error: 'Did not receive all the information'});
 
-        await Medication.findOne({ name: name })
+        Medication.findOne({ name: name })
         .then((Medication)=>{
             if (Medication) {
             res.status(400)
@@ -31,7 +31,7 @@ const medicationController = {
                 });
             }
         })
-    },
+    }
 };
 
 module.exports = { medicationController }
