@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import MedList from './MedList';
 import { startTransition, useContext } from 'react';
-import {PatientContext} from './PatientContext'
+import {PatientContext} from './PatientContext';
+import MedCard from './MedCard'
+import Cookies from "js-cookie";
 
-const Patient = ({ firstName, lastName, age, weight, medications }) => {
+const PatientCard = ({ selectedPatient, onHidePatient, onMedClick }) => {
   const [addMeds, setAddMeds] = useState(false);
   const [name, setName] = useState('');
   const [dosage, setDosage] = useState('');
@@ -12,23 +14,96 @@ const Patient = ({ firstName, lastName, age, weight, medications }) => {
   const [directions, setDirections] = useState('');
   const [showMeds, setShowMeds] = useState(false);
   const [medListKey, setMedListKey] = useState(0);
+
+//   const [patientFirstName, setPatientFirstName] = useState('');
+//   const [patientLastName, setPatientLastName] = useState('');
+//   const [patientAge, setPatientAge] = useState('');
+//   const [patientWeight, setPatientWeight] = useState('');
+
+  //for photos
+  const [file, setFile] = useState('');
+  const [formData, setFormData] = useState(new FormData());
+
+//   this state variable holds the selected medicine information
+  const [selectedMedicine, setSelectedMedicine] = useState(null);
   const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
   const [checkedState, setCheckedState] = useState(
     new Array(days.length).fill(false)
   );
   const {patientsArray, setPatientsArray} = useContext(PatientContext);
+
   const refresh = () => window.location.reload(true)
+  const email = Cookies.get("email");
 
   const handleShowMeds = (e) => {
     e.preventDefault();
     setShowMeds((prevShowMeds) => !prevShowMeds);
   };
 
+  const handleHidePatient = () => {
+    // Call the onHidePatient function passed as a prop to reset the selectedPatient state to null
+    onHidePatient();
+  };
+
   const handleAddClick = () => {
       // Toggle the value of addMeds
       setAddMeds((prevAddMeds) => !prevAddMeds);
   };
-  
+
+  const handleMedClick = (medication) => {
+    onMedClick(medication);
+  };
+const fileInputRef = useRef(null); // Create a ref for the file input element
+
+//specifically for images
+
+const handleChange = (e) => {
+    // No need to handle the event parameter, we directly access the input element using the ref
+    const selectedFile = fileInputRef.current.files[0];
+    setFile(selectedFile);
+
+    // Update the formData directly here
+    const newFormData = new FormData();
+    newFormData.append('profileImg', selectedFile);
+    newFormData.append('email', email);
+    newFormData.append('firstName', firstName);
+    newFormData.append('lastName', lastName);
+    newFormData.append('age', age);
+    newFormData.append('weight', weight);
+    setFormData(newFormData);
+  };
+
+  const onSubmit = useCallback(async (e) => {
+    e.preventDefault();
+    
+    //check if file state contains the image data; 
+    if (!file){
+      console.log("please select an image to upload.")
+      return;
+    }
+
+    try{
+      const response = await fetch(`/api/patientspage/upload/`, {
+        method: 'POST',
+        body: formData
+      })
+
+      const data = await response.json();
+      console.log(data.profileImg);
+
+      if (data && data.profileImg) {
+        setFile(data.profileImg);
+      } else {
+        console.log('Image URL not found in the server response.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  }, [formData, file]);
+
+  useEffect(() => {
+  }, [formData, onSubmit]);
+
   //loop over checkedState array using map method; if the value of the passed position parameter matches with the current index, then we reverse its value. 
   const handleOnChange = (position) => {
     const updatedCheckState = checkedState.map((item, index) => 
@@ -89,7 +164,7 @@ const Patient = ({ firstName, lastName, age, weight, medications }) => {
   const handleAddMed = () => {
     
     // Update 
-    const email = localStorage.getItem('email');
+    // const email = localStorage.getItem('email');
 
     // Package state variables into a medication object that will be sent to backend
     //7/19 -> DK updating medication object to be more specific about timing. 
@@ -146,26 +221,72 @@ const Patient = ({ firstName, lastName, age, weight, medications }) => {
     setDirections('');
   };
   
+  if(!selectedPatient){
+    return <div className="patient-text">Click a patient to access their information.</div>;
+  }
+
+  const { firstName, lastName, age, weight, medications } = selectedPatient; 
+
   return (
     <div className="patient">
-      <h4>
+      <div id="patient-card-name">
         {firstName} {lastName}
-      </h4>
-      <p>Age: {age}</p>
-      <p>Weight: {weight}</p>
+      </div>
+      <div id="patient-card-age">
+            Age: {age}
+        <br></br>
+            Weight: {weight}
+      </div>
       <button className="show-meds" onClick={handleShowMeds}>
         {/* Conditionally renders the following string in the button */}
         {showMeds ? 'Hide Medications' : 'Show Medications'}
       </button>
       {/* If showMeds is true, then render a MedList component */}
-      {showMeds && <MedList key={medListKey} medications={medications} firstName={firstName} lastName={lastName}/>}
+      <div className="med-card-container">
+        {showMeds && <MedList key={medListKey} medications={medications} firstName={firstName} lastName={lastName} onMedClick={handleMedClick}/>}</div>
       <br />
       <button className="add-med" onClick={handleAddClick}>
         {addMeds ? 'Hide Add Medications' : 'Add Medications'}  
       </button>
       <br/>
-      <button className="del-patient" onClick={() => handleDeletePatient(firstName, lastName)}> Delete Patient
+      <button id="hide-patient" onClick={() => handleHidePatient(firstName, lastName)}> <img alt="hide-button" src="https://icons.iconarchive.com/icons/iconoir-team/iconoir/16/minus-hexagon-icon.png" width="20" height="20"/>
         </button>
+        <div className = "patientcard-buttons">
+             <button id="image-upload">
+                <label for="image-button-click">
+                    <img alt="choosephotoicon" id="image-button" src="https://icons.iconarchive.com/icons/colebemis/feather/32/camera-icon.png" width="24" height="24"/>
+                </label></button>
+            {/* submit photo button */}
+            <button id="image-submit-button" type="submit"><img alt="choosephotoicon" src="https://icons.iconarchive.com/icons/github/octicons/24/upload-16-icon.png"></img></button>
+            {/* delete patient button */}
+            <button id="del-patient" onClick={() => handleDeletePatient(firstName, lastName)}><img alt="delete-icon" src="https://icons.iconarchive.com/icons/icons8/windows-8/32/Editing-Delete-icon.png" width="24" height="24"/>
+            </button>
+        </div>
+        
+        <form className="form-group" onSubmit={onSubmit}>
+                {/* <label for="image-submit-button">
+                    <img alt="uploadphotoicon" src="https://icons.iconarchive.com/icons/github/octicons/32/upload-16-icon.png" width="32" height="32"/>
+                </label> */}
+                <input type="file" id="image-button-click" ref={fileInputRef} onChange={handleChange} />
+                
+                {file ? (
+                <img className="patient-image" alt="personphoto" src={file} />
+                    ) : (
+                <div className="patient-image">
+                    <div className = "patient-image-text">Click the camera icon to choose a patient photo, and the arrow icon to upload.
+                    </div>
+                </div>
+                    )}
+
+                {/* hidden buttons */}
+                {/* Hidden input fields to hold email, firstName, and lastName */}
+                <input type="hidden" name="email" value={email} />
+                <input type="hidden" name="firstName" value={firstName} />
+                <input type="hidden" name="lastName" value={lastName} />
+            {/* <button onClick={this.fileUploadHandler}>Upload</button> */}
+        </form>
+
+
       {addMeds && (
         // Updating this form-container to include start date, dosage - add units?, days of the week taking it, frequency per day (turn into dropdown?), specific times to take the medication 
         <div className="form-container">
@@ -263,4 +384,4 @@ const Patient = ({ firstName, lastName, age, weight, medications }) => {
   );
 };
 
-export default Patient;
+export default PatientCard;

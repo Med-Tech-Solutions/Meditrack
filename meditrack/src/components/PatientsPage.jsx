@@ -1,15 +1,23 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import PatientList from './PatientList';
+import {PatientContext} from './PatientContext'
+import PatientRoster from './PatientRoster';
+import PatientCard from './PatientCard';
+import MedCard from './MedCard';
+import MedList from './MedList';
 
 const PatientsPage = props => {
-    const [patientsArray, setPatientsArray] = useState([]);
     const [firstName, setFirstName] = useState("");
     const [lastName, setLastName] = useState("");
     const [age, setAge] = useState("");
     const [weight, setWeight] = useState("");
     const email = localStorage.getItem('email');
     const name = localStorage.getItem('firstName');
-
+    const [selectedPatient, setSelectedPatient] = useState(null);
+    const [selectedMed, setSelectedMed] = useState(null);
+    const [showMedCard, setShowMedCard] = useState(true);
+    const {patientsArray, setPatientsArray} = useContext(PatientContext);
+    
     // Obtain the User's data from the database
     useEffect( () => {
         const email = localStorage.getItem('email');
@@ -21,9 +29,31 @@ const PatientsPage = props => {
         .catch(() => console.log("got nothing"))
 
     }, []);
+
+    const handlePatientClick = (patient) => {
+        console.log(patient);
+        setSelectedPatient(patient);
+    }
+
+    const handleHidePatient = () => {
+        setSelectedPatient(null);
+      };
     
+    //   this is for the med component inside the patient card.
+    const handleHideMed = () => {
+        setSelectedMed(null);
+    } 
+    const handleMedClick = (medication) => {
+        setSelectedMed(medication);
+    }
+    //this is the med card component outside patient card
+    const handleHideMedCard = () => {
+        setSelectedMed(null);
+        // setShowMedCard((prevShowMedCard) => !prevShowMedCard);
+    }
+
     const handleAddPatient = () => {
-    
+        console.log(patientsArray);
         // Initialize an array 'update' to be equal to what is stored in the state patientsArray variable
         let update = [...patientsArray];
 
@@ -60,47 +90,19 @@ const PatientsPage = props => {
     }
 
     return (
-        <div className = 'dashboard-container' >
-            <div className="patients-container">
-            {patientsArray && <PatientList className="patients-list" patients = { patientsArray } handleAddPatient={handleAddPatient}></PatientList>}
-            </div>
-            <form className="form-input" id="add-patient-form" onSubmit={(event) => {
-                event.preventDefault();
-                handleAddPatient();
-                }}>
-                <span className="add-patient">Add Patient</span>
-                <input
-                type="text"
-                placeholder="First Name"
-                value={firstName}
-                onChange={(e)=>setFirstName(e.target.value)}
-                >
-                </input>
-                <input
-                type="text"
-                placeholder="Last Name"
-                value={lastName}
-                onChange={(e)=>setLastName(e.target.value)}
-                >
-                </input>
-                <input
-                type="text"
-                placeholder="Age"
-                value={age}
-                onChange={(e)=>setAge(e.target.value)}
-                >
-                </input>
-                <input
-                type="text"
-                placeholder="Weight"
-                value={weight}
-                onChange={(e)=>setWeight(e.target.value)}
-                >
-                </input><br></br>
-                <input type="submit"></input>
-            </form>
+        //declared CreateContext at the top of this component because this component is the parent of patientList, patient, and medlist, so we want to pass down the patientsarray to all of those components; 
+        //PatientContext.provider allows us to supply the state value that we want passed down. 
+        <div className = 'dashboard-container'>
+            <div id = 'patient-roster-container'><PatientRoster onPatientClick={handlePatientClick}></PatientRoster></div>
+            <div className="patients-container"><PatientCard selectedPatient={selectedPatient} onHidePatient={handleHidePatient} onMedClick={handleMedClick}></PatientCard></div>
+            {selectedMed && showMedCard && (
+        <div className="med-card">
+          <MedCard selectedMedication={selectedMed} hideMedCard={handleHideMedCard} onHideMed={handleHideMed} />
         </div>
-    );
+      )}
+    </div>
+    )
 };
+        
 
 export default PatientsPage;
