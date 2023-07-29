@@ -16,8 +16,6 @@ const futureIntakeSchema = new mongoose.Schema({
 
 const FutureIntake = mongoose.model('futureIntake', futureIntakeSchema)
 
-
-
 const medicationLogSchema = new mongoose.Schema({
     medication: {type : String, require : false},
     date: { type: Date, required : true },
@@ -28,6 +26,7 @@ const MedicationLog = mongoose.model('medicationLog', medicationLogSchema)
 
 const medicationSchema = new Schema({
     name: {type: String, required: true},
+    week: {type: String, required: true},
     dosage: {type: String, required: true},
     frequency: {type: String, required: true},
     directions: {type: String, required: true},
@@ -37,6 +36,7 @@ const medicationSchema = new Schema({
 
 const Medication = mongoose.model('medication', medicationSchema)
 
+
 const patientSchema = new Schema({
     firstName: {type: String, required: true},
     lastName: {type: String, required: true},
@@ -44,7 +44,7 @@ const patientSchema = new Schema({
     weight: {type: Number, required: true},
     medications: {type: [medicationSchema], required: false},
     medicationLog : {type: [medicationLogSchema], required : false},
-    futureIntake : {type: futureIntakeSchema, required: false} 
+    futureIntake : {type: futureIntakeSchema, required: false},
 })
 
 const Patient = mongoose.model('patient', patientSchema)
@@ -57,11 +57,13 @@ const userSchema = new Schema({
     // weight: {type: Number, required: true},
     email: {type: String, required: true},
     password: {type: String, required: true},
-    patients: {type: [patientSchema], required: false}
+    patients: {type: [patientSchema], required: false},
+    role: { type: String, required: true},
+    session: {type: String},
+    expiration: {type: String}
 })
 
 const User = mongoose.model('user', userSchema)
-
 
 
 module.exports = {
@@ -70,5 +72,6 @@ module.exports = {
     User,
     MedicationLog,
     FutureIntake,
-    Doctor
+    Doctor,
+    Event,
 }

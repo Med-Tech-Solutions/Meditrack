@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
+import { useNavigate } from 'react-router-dom';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import DatePicker from 'react-datepicker';
+import Cookies from 'js-cookie';
 
 const PatientCalendar = props => {
 
@@ -17,9 +19,18 @@ const PatientCalendar = props => {
   const [patientsArray, setPatientsArray] = useState([]);
   const [selectedPatient, setSelectedPatient] = useState([]);
 
+  const navigate = useNavigate();
+ // name is for "Welcome, user message on Dashboard" -AG
+  const name = Cookies.get("name");
+  const email = Cookies.get("email");
+
   // Request User's data from the database
   useEffect( () => {
-    const email = localStorage.getItem('email');
+
+    if (!email) {
+      navigate("/login");
+    }
+
     fetch(`/api/dashboard/${email}`)
     .then((data) => data.json()) 
     .then((data) => {
@@ -34,6 +45,7 @@ const PatientCalendar = props => {
               title: log.medication,
               start: new Date(log.date),
               patientFirstName: patient.firstName,
+              _id: log._id,
             }))
           );
         }, []);
@@ -70,6 +82,7 @@ const PatientCalendar = props => {
   
 
   function handleAddEvent() {
+
     if (!newEvent.title || !newEvent.start) {
       return;
     }
@@ -79,7 +92,7 @@ const PatientCalendar = props => {
       medication: newEvent.title,
       date: newEvent.start,
     };
-  
+    console.log(eventPayload);
     // Update allEvents
     setAllEvents([...allEvents, newEvent]);
   
@@ -89,26 +102,17 @@ const PatientCalendar = props => {
       start: newEvent.start,
       patientFirstName: selectedPatient.firstName,
     }]);
-  
-    const email = localStorage.getItem('email');
     
-    // Update the patientsArray state variable
-    // setPatientsArray(...update);
     
     // Initialize temp variable to send to backend to update the User's document
     let update = [...patientsArray];
-    fetch(`/api/dashboard/${email}`)
-      .then((data) => data.json())
-      .then((data) => {
-        update = [...data.patients];
-        for (let i = 0; i < update.length; i++) {
-          if (update[i].firstName === selectedPatient.firstName) {
-            update[i].medicationLog.push(eventPayload);
-          }
-        }
-      });
-        console.log('update', update);
-
+    console.log('update before fetch', update)
+    for (let i = 0; i < update.length; i++) {
+      if (update[i].firstName === selectedPatient.firstName) {
+        update[i].medicationLog.push(eventPayload);
+      }
+    }
+    
     // Send the update to the backend
     fetch('/api/dashboard/patient', {
       method: 'POST',
@@ -119,6 +123,9 @@ const PatientCalendar = props => {
     })
       .then(response => response.json())
       .then(data => {
+        if (data === false) {
+          navigate('/login');
+        }
         setNewEvent({ title: '', start: null });
       })
       .catch(error => {
@@ -126,9 +133,60 @@ const PatientCalendar = props => {
       });
   };
   
-
-  
-    
+// Function to handle event deletion
+const handleDeleteEvent = (eventToDelete) => {
+  let update = [...patientsArray]; //this is update
+  let patient;
+  for (let i = 0; i < update.length; i++) {
+    if (update[i].firstName === eventToDelete.patientFirstName) {
+      patient = update[i];
+      console.log(patient);
+      // console.log('medicationlog id', patient.medicationLog[1]._id, eventToDelete);
+      const updatedMedicationLog = patient.medicationLog.filter(
+        (event) => event._id !== eventToDelete._id
+        //WHAT UNIQUE IDENTIFIERS ARE THERE BETWEEN THE EVENT AND MEDICATION LOGS???
+      );
+      // const updatedMedicationLog = [];
+      patient.medicationLog = updatedMedicationLog;
+      update[i] = patient;
+      console.log('update before fetch', update);
+      break;
+      }
+  }
+  fetch(`/api/dashboard/patient`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      email,
+      update,
+    }),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Failed to delete event from the database.");
+      }
+      return response;
+    })
+    .then((result) => {
+      return result.json()
+    })
+    .then((result) => {
+      if (result === false) {
+        navigate('/login');
+      }
+      // Update the allEvents state after the successful DELETE request.
+      console.log('update after fetch', update)
+      const updatedAllEvents = allEvents.filter((event) => event !== eventToDelete);
+      const updatedSelectedEvents = selectedEvents.filter((event) => event !== eventToDelete);
+      setAllEvents(updatedAllEvents);
+      setSelectedEvents(updatedSelectedEvents);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+};  
   return (
     <div className="med-calendar-container" style={{minHeight: "87vh"}}>
       <h1>Medicine Dosage Log</h1>
@@ -166,8 +224,17 @@ const PatientCalendar = props => {
                 dateFormat="Pp"
                 style={{ marginRight: "10px", marginBottom: "10px" }}
                 selected={newEvent.start}
-                onChange={(start) => setNewEvent({ ...newEvent, start })}
-              />
+                onChange={(start) => 
+                  setNewEvent({ ...newEvent, start })
+                //   .fetch(`/api/adduserevents/${email}`, {
+                //     method: "POST",                    // declares HTTP request method
+                //     headers: {
+                //       "Content-Type": "application/json"    // declares format of data
+                //     },
+                //     body: JSON.stringify(newEvent)
+                // })
+                    }
+                />
             </div>
             <button className="med-cal-btn" style={{ marginTop: "10px" }} onClick={handleAddEvent}>Add Event</button>
           </div>
@@ -179,7 +246,19 @@ const PatientCalendar = props => {
         events={selectedEvents}
         startAccessor="start"
         endAccessor="start"
-        style={{ height: 500, margin: "50px" }}
+        style={{ 
+          height: 500, 
+          margin: "50px",
+        }}
+        components={{
+          // Customize the rendering of each event in the calendar
+          event: ({ event }) => (
+            <div>
+              <span>{event.title}</span>
+              <button onClick={() => handleDeleteEvent(event)}>Delete</button>
+            </div>
+          ),
+        }}
       />
     </div>
   );

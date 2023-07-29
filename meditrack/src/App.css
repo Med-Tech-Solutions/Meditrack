@@ -46,6 +46,9 @@ body {
   min-height: 100vh;
 }
 
+/*
+
+
 
 /*
 ======================================================================================================================================================
@@ -57,6 +60,26 @@ body {
 
 .homepage-container {
   /* margin: 70px; */
+}
+
+.dashboard-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+}
+
+.patients-list {
+    gap: 2rem;
+    display: grid;
+    grid-auto-flow: row;
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.patients-container {
+  padding: 40px;
+  /* width: 100%; */
+  /* grid-auto-flow: row; */
+  grid-column: 2 / span 4;
 }
 
 .link {
@@ -190,12 +213,14 @@ body {
 .footer {
   /* position: fixed; */
   z-index: -1;
+  position: absolute;
   /* position: static; */
   width: 100%;
   margin-top: auto;
-  /* bottom: 0; */
+  bottom: 0;
   /* left: 0; */
   /* margin-top: 20px; */
+  /* height: 100px */
 }
 
 /*
@@ -207,11 +232,12 @@ body {
 */
 
 .form-container {
-  display: flex;
-  flex-direction: column;
+  /* display: flex; */
+  /* flex-direction: column; */
   align-items: center;
   justify-content: center;
-  height: 50vh;
+  margin-top: 5px;
+  height: 55vh;
 }
 
 .form-input {
@@ -266,25 +292,48 @@ body {
 
 ======================================================================================================================================================
 */
+.dashboard-container{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  /* gap: 20px;  */
+  /* grid-auto-flow: column;  */
+}
 
-.patients-header {
+/* .patients-header {
   font-size: 2rem;
   margin-top: 50px;
   margin-bottom: 50px;
   color: var(--dark-blue);
-}
+} */
 
 .patients-container {
-  padding: 20px 30px 50px 30px;
-  width: 100%;
+  /* grid-column-start: 2;
+  grid-column-end: 6;  */
+  padding: 40px;
+  /* width: 100%; */
+  /* grid-auto-flow: row; */
+  grid-column: 2 / span 4;
+}
+
+#add-patient-form {
+  /* grid-column-start: 1;
+  grid-column-end: 2; */
+  margin-bottom: 200px;
+  grid-row-start: 2; 
+  grid-row-end: 3;
+  margin: 50px;
+  position: fixed;
 }
 
 .patients-list {
-  display: flex;
+  /* display: flex;
   flex-wrap: wrap;
+  margin: 0 200px; */
   gap: 2rem;
-  margin: 0 200px;
-  
+  display: grid; 
+  grid-auto-flow: row;
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .patient {
@@ -320,8 +369,8 @@ body {
   margin-bottom: 5px;
 }
 
-#add-patient-form {
-  margin-bottom: 200px
+.weekCheck {
+  color: black;
 }
 
 /*
@@ -587,6 +636,22 @@ button.rbc-input::-moz-focus-inner {
   margin-bottom: 10px;
   font-size: 16px;
 }
+
+.dashcalendar .rbc-toolbar {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: none;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
 .rbc-toolbar .rbc-toolbar-label {
   -webkit-box-flex: 1;
       -ms-flex-positive: 1;
@@ -631,8 +696,8 @@ button.rbc-input::-moz-focus-inner {
   border-color: #adadad;
 }
 
-.rbc-btn-group {
-  display: inline-block;
+.rbc-btn-group { 
+  display: inline;
   white-space: nowrap;
 }
 .rbc-btn-group > button:first-child:not(:last-child) {
