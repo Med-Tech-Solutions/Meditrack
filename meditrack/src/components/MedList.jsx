@@ -57,7 +57,6 @@ const MedList = ({ medications, firstName }) => {
             {(medications.length > 0) && medications.map((medication) => (
                 <div>
                     <p>Name: {medication.name}</p>
-                    <p>Weekly Overview: {medication.week}</p>
                     <p>Dosage: {medication.dosage}</p>
                     <p>Frequency: {medication.frequency}</p>
                     <p>Directions: {medication.directions}</p>

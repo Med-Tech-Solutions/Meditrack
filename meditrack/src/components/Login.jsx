@@ -22,10 +22,10 @@ const Login = props => {
                 throw new Error ({err: 'login credntials are incorrect'});
         }).then((data) => {
             if (data.firstName){
-                // console.log(data);
+                console.log(data);
                 localStorage.setItem('email', email);
                 localStorage.setItem('firstName', data.firstName);
-                navigate(`/dashboard`);
+                navigate(`/dashboard/${email}`);
             }
         }).catch((Error) => {
             console.log(Error)
