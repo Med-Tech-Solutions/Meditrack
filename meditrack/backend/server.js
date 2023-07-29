@@ -7,6 +7,35 @@ const port = 3000;
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const { User } = require("./models/models");
+const path = require('path'); 
+
+//needed to upload and save image to database 
+const uuidv4 = require('uuid/v4');
+const multer = require('multer');
+const DIR = './public/userphotos';
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+      cb(null, DIR);
+  },
+  filename: (req, file, cb) => {
+      const fileName = file.originalname.toLowerCase().split(' ').join('-');
+      cb(null, uuidv4() + '-' + fileName)
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+      if (file.mimetype === "image/png" || file.mimetype === "image/jpg" || file.mimetype === "image/jpeg") {
+          cb(null, true);
+      } else {
+          cb(null, false);
+          return cb(new Error('Only .png, .jpg and .jpeg format allowed!'));
+      }
+  }
+});
+
 // const client = require('twilio')('AC08ded748a1d1c45ddbc34311218ad235', '35646b7d7c1f32510417fefe5e00412b');
 
 mongoose.connect(
@@ -28,6 +57,9 @@ app.use(
     credentials: true,
   })
 );
+app.set("view engine", "ejs");
+// app.use('/public/userphotos', express.static(path.resolve(__dirname, '../public/userphotos')));
+app.use("/public", express.static(path.join(__dirname, "public")));
 
 // app.get(
 //   "/dashboard/:email",
@@ -133,9 +165,59 @@ app.post("/api/doctor", userController.createDoctor, (req, res) => {
 //   res.status(200).json({message: 'Medication Retrieved!'})
 // })
 
-// app.delete('/api/dashboard/delete/:firstName', medicationController.deletePatient, (req, res) => {
-//   res.status(200).json({message: 'Medication deleted!'})
-// })
+app.post('/api/patientspage/upload/', upload.single('profileImg'), async (req, res) => {
+  const { email, firstName, lastName, age, weight } = req.body;
+
+  if (!email || !firstName || !lastName || !age || !weight) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  // Create an object with the fields that need to be updated
+  const updateFields = {};
+
+  if (req.file) {
+    // Construct the image URL using the static middleware
+    updateFields['patients.$.profileImg'] = '/public/userphotos/' + req.file.filename;
+    console.log(updateFields);
+  }
+
+  try {
+    // Find the user by email and update the fields
+    const updatedUser = await User.findOneAndUpdate( { email, 'patients.firstName': firstName, 'patients.lastName': lastName },
+    updateFields,
+    { omitUndefined: true, new: true });
+
+    if (!updatedUser) {
+      throw new Error('User not found');
+    }
+
+    // Find the patient in the user's patients array
+    const patientIndex = updatedUser.patients.findIndex(
+      (patient) => patient.firstName === firstName && patient.lastName === lastName
+    );
+
+    if (patientIndex === -1) {
+      console.log('Patient could not be found.');
+      return res.status(404).json({ error: 'Patient not found' });
+    }
+    console.log(updatedUser.patients[patientIndex].profileImg)
+    // Save the updated user to the database
+    // await updatedUser.save();
+
+    console.log(updatedUser);
+    res.status(200).json({
+      message: 'Image uploaded successfully!',
+      profileImg: updatedUser.patients[patientIndex].profileImg,
+    });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+app.delete('/api/patientspage/delete/:email', medicationController.deleteMedication, (req, res) => {
+  res.status(200).json({message: 'Medication deleted!'})
+})
 
 app.use((err, req, res, next) => {
   const defaultErr = {
