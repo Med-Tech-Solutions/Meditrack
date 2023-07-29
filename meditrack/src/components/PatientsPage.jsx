@@ -17,7 +17,7 @@ const PatientsPage = props => {
     const [selectedMed, setSelectedMed] = useState(null);
     const [showMedCard, setShowMedCard] = useState(true);
     const {patientsArray, setPatientsArray} = useContext(PatientContext);
-    
+    const refresh = () => window.location.reload(true)
     // Obtain the User's data from the database
     useEffect( () => {
         const email = localStorage.getItem('email');
@@ -84,6 +84,7 @@ const PatientsPage = props => {
         .then((data) => {
             // console.log(data);
             setPatientsArray(data.patients);
+            refresh();
         })
         // .then(data => console.log("log" ,data))
         .catch(() => console.log("got nothing"))
