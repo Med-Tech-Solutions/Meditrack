@@ -116,8 +116,8 @@ const MedList = ({onMedClick, medications, firstName, lastName }) => {
               {medications.map((medication) => (
                 <div key={medication.name} className="medication-item">
                   <div className="med-name" onClick={() => onMedClick(medication)}>{medication.name}</div>
-                  <button className="delete-med" onClick={() => handleDeleteClick(medication.name)}>
-                    Delete
+                  <button id="delete-med" onClick={() => handleDeleteClick(medication.name)}>
+                    <img alt="deletemedicon" src="https://icons.iconarchive.com/icons/colebemis/feather/24/delete-icon.png" width="14" height="14"/>
                   </button>
                 </div>
               ))}
