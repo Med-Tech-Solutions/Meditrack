@@ -390,7 +390,7 @@ body {
   /* max-width: 400px; */
   margin: 0 auto;
   color: var(--cream);
-  background-color: #aa4751;
+  background-color: #979091;
   /* height: 100%; */
   font-size: 150%;
   text-align: center;
@@ -491,45 +491,64 @@ body {
   align-items: center; 
   justify-content: space-between; 
   margin-top: 10px;
+  border-radius: 20px;
   /* border: 1px solid #ccc;  */
   /* padding: 10px; 
   width: 100%;  */
+  background-color: #f9e2c5;
+  color: var(--dark-blue);
+}
+
+.medication-item:hover{
+  color: var(--dark-blue);
+  font-weight: 1000px;
+  background-color: rgba(var(--new-yellow-rgb), 1.5); 
 }
 
 .medication-grid{
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between; 
+  /* align-items: center; */
+  justify-content: center; 
   /* grid-template-columns: repeat(4, 1fr); */
-  grid-gap: 10px; 
+  grid-gap: 0px; 
+  margin-left: 10%;
+  width: 80%;
+  height: 80%;
 }
 
 .med-name{
-  font-size: 15px; 
-  /* grid-column-start: 1;
-  grid-column-end: 2; */
-  /* margin-right: 100px; */
+  font-size: 14px; 
+  margin-left: 15px;
+  font-weight: 1000px;
+  border: none;
+  border-radius: 5px;
+  outline: none;
+  /* background-color: var(--cream); */
+  /* color: var(--dark-red); */
+  /* font-weight: bold; */
+  cursor: pointer;
 }
-
-/* .delete-btn-container{
-  margin-right: 5px; 
-  grid-column-end: 3;
-  /* display: flex; */
-/* } */ 
 
 .add-med{
   grid-column-start: 5;
   grid-column-end: 8;
   grid-row-start: 8;
-  /* grid-row-end: 10;  */
+  grid-row-end: 10; 
 }
 
-.delete-med{
-  font-size: 10px;
+#delete-med{ 
+  /* font-size: 5px; */
   grid-column-start: 4;
+  background-color: transparent;
+  padding: 5px;
+  margin: 5px;
 }
+
+/* #delete-med:hover{
+  background-color: rgba(var(--new-yellow-rgb), 1.5);
+} */
 
 .hide-med-button{
   padding: 0.5rem 1rem;
@@ -591,7 +610,8 @@ body {
   border-radius: 5px;
   outline: none;
   background-color: var(--cream);
-  color: var(--dark-red);
+  /* color: var(--dark-red); */
+  color: black; 
   font-weight: bold;
   cursor: pointer;
 }
@@ -613,12 +633,22 @@ body {
 /* CSS for the PatientRoster component */
 .patient-roster {
   display: grid;
-  grid-auto-rows: 40px;
+  grid-auto-rows: 30px;
   list-style-type: none;
 }
 
+.roster{
+  align-self: center;
+  font-weight: 100;
+}
+
+.roster:hover{
+  background-color: #f8c587;
+}
+
 .toggle-add-patient{
-  font-size: 20px;
+  font-size: 25px;
+  margin-bottom: -20px;
   background-color: #ca4d59;
   color: #F7EDEB;
   border-radius: 10px;
