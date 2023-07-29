@@ -45,6 +45,9 @@ const patientSchema = new Schema({
     medications: {type: [medicationSchema], required: false},
     medicationLog : {type: [medicationLogSchema], required : false},
     futureIntake : {type: futureIntakeSchema, required: false},
+    profileImg: {
+        type: String,
+    }
 })
 
 const Patient = mongoose.model('patient', patientSchema)

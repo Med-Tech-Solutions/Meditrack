@@ -255,9 +255,9 @@ body {
   align-items: center;
   justify-content: center;
   margin-top: 15px;
-  grid-column-start: 4;
-  grid-column-end: 6;
-  grid-row-start: 8;
+  grid-column-start: 5;
+  grid-column-end: 8;
+  grid-row-start: 10;
   /* grid-row-end: 9; */
   /* height: 55vh; */
 }
@@ -301,19 +301,6 @@ body {
 .form-input input[type='submit']:hover {
   background-color: var(--dark-red);
   color: white;
-}
-
-.form-input label {
-  
-}
-
-.del-patient{
-  /* grid-column-start: 1;
-  grid-column-end: 2;
-  grid-row-start: 2;
-  grid-row-end: 3;
-  max-width: 20%;
-  align-items: center; */
 }
 
 /*
@@ -368,7 +355,7 @@ body {
 /* } */
 
 .patient:hover {
-  background-color: #AE2B39;
+  background-color: #6e6c6c;
   /* opacity: 0.6; */
   transition: 0.5s;
 }
@@ -384,9 +371,9 @@ body {
   /* max-width: 400px; */
   margin: 0 auto;
   color: var(--cream);
-  background-color: #aa4751;
+  background-color: #979091;
   display: grid; 
-  grid-template-columns: repeat(5, 1fr); 
+  grid-template-columns: repeat(7, 1fr); 
   grid-template-rows: 40px;
   /* grid-auto-rows: 40px; */
   text-align: left;
@@ -408,19 +395,22 @@ body {
   font-size: 150%;
   text-align: center;
   width: 100%;
+  /* justify-content: end; */
 }
 
 #patient-card-name{
   grid-column-start: 1; 
-  grid-column-end: 4;
+  grid-column-end: 5;
   grid-row-start: 1;
-  font-size: 200%;
+  font-size: 225%;
+  font-weight: 1000;
 }
 
 #patient-card-age{
   grid-column-start: 1;
-  grid-column-end: 4;
+  grid-column-end: 5;
   grid-row-start: 3;
+  font-size: 125%;
 }
 
 /* images */
@@ -431,33 +421,33 @@ body {
   grid-row-end:6;
 } */
 
-.image-button{
+#image-button{
+  cursor: pointer;
+}
+
+#image-button:hover{
+
+}
+
+#image-button-click{
   grid-row-start: 4;
   grid-row-end:6;
   grid-column-start: 4;
   grid-column-end: 6;
-}
-
-.patient-image{
-  grid-column-start: 4;
-  grid-column-end: 6;
-  grid-row-start: 3;
-  grid-row-end: 4;
-  width: 100%;
-  align-items: center;
+  cursor: pointer;
 }
 
 .show-meds{
-  grid-column-start: 1; 
-  grid-column-end: 3;
-  grid-row-start: 7;
-  grid-row-end: 8;
+  grid-column-start: 1;
+  grid-column-end: 4;
+  grid-row-start: 8;
+  /* grid-row-end: 10; */
 }
 
 .med-card-container{
   grid-column-start: 1; 
-  grid-column-end: 3;
-  grid-row-start: 8;
+  grid-column-end: 4;
+  grid-row-start: 10;
   height: auto; 
 }
 
@@ -483,7 +473,7 @@ body {
   background-color: rgba(var(--berry-red), .9);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   color: var(--cream);
-  background-color: #aa4751;
+  background-color: #ca4d59;
   margin-top: 39px;
   width: 90%;
   height: 100%;
@@ -517,7 +507,7 @@ body {
 }
 
 .med-name{
-  font-size: 20px; 
+  font-size: 15px; 
   /* grid-column-start: 1;
   grid-column-end: 2; */
   /* margin-right: 100px; */
@@ -530,10 +520,10 @@ body {
 /* } */ 
 
 .add-med{
-  grid-column-start: 4;
-  grid-column-end: 6;
-  grid-row-start: 7;
-  grid-row-end: 8; 
+  grid-column-start: 5;
+  grid-column-end: 8;
+  grid-row-start: 8;
+  /* grid-row-end: 10;  */
 }
 
 .delete-med{
@@ -541,16 +531,57 @@ body {
   grid-column-start: 4;
 }
 
-.del-patient{
-  grid-column-start: 5;
-  grid-row-start: 1;
-  width: 90%;
+.hide-med-button{
+  padding: 0.5rem 1rem;
+  margin-top: 3px;
+  border: none;
+  border-radius: 5px;
+  outline: none;
+  background-color: var(--cream);
+  color: var(--dark-red);
+  font-weight: bold;
+  cursor: pointer;
 }
 
-.hide-patient{
-  grid-column-start: 4;
+.hide-med-button:hover {
+  background-color: rgba(var(--new-yellow-rgb), 1.5);
+  color: var(--dark-blue);
+}
+
+#hide-patient{
+  grid-column-start: 1;
   grid-row-start: 1;
-  width: 80%;
+  /* height: 50%;
+  width: 20%; */
+  background-color: transparent;
+  /* border-radius: 50%; */
+  /* display: inline-block; */
+  margin-top: -60%;
+  margin-left: -40%;
+  justify-self: left;
+  filter: brightness(0) invert(1);
+}
+
+#del-patient{
+  grid-column-start: 3;
+  grid-row-start: 6;
+  /* grid-row-end: 3; */
+  /* height: 70%;
+  width: 30%; */
+  background-color: #f8c587;
+  padding: 10px;
+  border: 1px;
+  border-radius: 20%;
+  /* margin-top: -30%; */ 
+  /* display: inline-block; */
+}
+
+#del-patient:hover {background-color: #f9dcb9;}
+
+#del-patient:active{
+  background-color: #f9dcb9;
+  box-shadow: 0 2px #666;
+  transform: translateY(3px);
 }
 
 .patient button {
@@ -588,7 +619,7 @@ body {
 
 .toggle-add-patient{
   font-size: 20px;
-  background-color: #aa4751;
+  background-color: #ca4d59;
   color: #F7EDEB;
   border-radius: 10px;
   outline: none;
@@ -614,6 +645,90 @@ body {
   font-size: 17px;
 }
 
+/* form container for submitting image */
+.form-group{
+  padding-top: 0px;
+  grid-column-start: 5;
+  grid-column-end: 8;
+  grid-row-start: 1;
+  grid-row-end: 6;
+  border: 1px;
+  /* display: grid;
+  grid-template-columns: repeat(4, 1fr); 
+  grid-template-rows: repeat(4, 1fr); */
+  /* grid-template-rows: 1 fr; */
+}
+
+#image-submit-button{
+  /* grid-column-start: 2; */
+  /* grid-row-start: 6; */
+  /* /* margin: 0px;   */
+  padding: 10px;
+  border-radius: 20%;
+  background-color: #f8c587;
+  /* text-align: left; */
+}
+
+#image-submit-button:hover {
+  transition-delay: 10ms;
+  background-color: #f9dcb9;
+}
+
+#image-submit-button:active{
+  background-color: #f9dcb9;
+  box-shadow: 0 2px #666;
+  transform: translateY(3px);
+}
+
+.patientcard-buttons{
+  grid-column-start: 1; 
+  grid-column-end: 4;
+  grid-row-start: 6; 
+  display: flex; 
+  flex-direction: row;
+  justify-content: space-between;
+  padding-top: 1rem; 
+  padding-bottom: 1rem; 
+  /* padding: 1rem; */
+}
+
+#image-upload{
+  /* grid-column-start: 1; */
+  /* grid-row-start: 6; */ 
+  /* text-align: left; */
+  background-color: #f8c587;
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 20%;
+}
+
+#image-upload:hover {background-color: #f9dcb9;}
+
+#image-upload:active{
+  background-color: #f9dcb9;
+  box-shadow: 0 2px #666;
+  transform: translateY(3px);
+}
+
+.form-group>input {
+  display: none;
+}
+
+.patient-image{
+  grid-column-start: 2;
+  grid-column-end: 6;
+  grid-row-start: 1;
+  grid-row-end: 6;
+  width: 100%;
+  height: 100%;
+  /* justify-self: center; */
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  display: flex; 
+  text-align: center;
+  align-items: center; /* Vertically center the content */
+  justify-content: center; /* Horizontally center the content */
+}
 /*
 ======================================================================================================================================================
 

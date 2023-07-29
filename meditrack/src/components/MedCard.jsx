@@ -24,7 +24,7 @@ const MedCard = ({selectedMedication, hideMedCard}) => {
             <p>Week: {week}</p>
             <p>Frequency: {frequency}</p>
             <p>Directions: {directions}</p>
-            <button onClick={() => hideMedCardHandler()}>Hide</button>
+            <button className="hide-med-button" onClick={() => hideMedCardHandler()}>Hide</button>
         </div>
     )
 }
