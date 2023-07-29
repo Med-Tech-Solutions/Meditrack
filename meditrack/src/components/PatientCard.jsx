@@ -211,7 +211,7 @@ const handleChange = (e) => {
       .catch(() => console.log('got nothing'));
 
     // setMedListKey((prevKey) => prevKey + 1);
-
+    
     // Reset state variables
     setName('');
     setCheckedState(new Array(days.length).fill(false))
@@ -235,6 +235,7 @@ const handleChange = (e) => {
       <div id="patient-card-age">
             Age: {age}
         <br></br>
+        <br></br>
             Weight: {weight}
       </div>
       <button className="show-meds" onClick={handleShowMeds}>
@@ -254,15 +255,15 @@ const handleChange = (e) => {
         <div className = "patientcard-buttons">
              <button id="image-upload">
                 <label for="image-button-click">
-                    <img alt="choosephotoicon" id="image-button" src="https://icons.iconarchive.com/icons/colebemis/feather/32/camera-icon.png" width="24" height="24"/>
+                    <img alt="choosephotoicon" id="image-button" src="https://icons.iconarchive.com/icons/colebemis/feather/32/camera-icon.png" width="16" height="16"/>
                 </label></button>
             {/* submit photo button */}
-            <button id="image-submit-button" type="submit"><img alt="choosephotoicon" src="https://icons.iconarchive.com/icons/github/octicons/24/upload-16-icon.png"></img></button>
+            <button id="image-submit-button" type="submit"><img alt="choosephotoicon" src="https://icons.iconarchive.com/icons/github/octicons/16/upload-16-icon.png"></img></button>
             {/* delete patient button */}
-            <button id="del-patient" onClick={() => handleDeletePatient(firstName, lastName)}><img alt="delete-icon" src="https://icons.iconarchive.com/icons/icons8/windows-8/32/Editing-Delete-icon.png" width="24" height="24"/>
-            </button>
         </div>
-        
+
+        <button id="del-patient" onClick={() => handleDeletePatient(firstName, lastName)}><img alt="delete-icon" src="https://icons.iconarchive.com/icons/icons8/windows-8/32/Editing-Delete-icon.png" width="20" height="20"/></button>
+
         <form className="form-group" onSubmit={onSubmit}>
                 {/* <label for="image-submit-button">
                     <img alt="uploadphotoicon" src="https://icons.iconarchive.com/icons/github/octicons/32/upload-16-icon.png" width="32" height="32"/>
@@ -306,7 +307,8 @@ const handleChange = (e) => {
             {/* change font color of weekly overview? */}
             {/* added the checkboxes for the patient form; instead of hard-coding, could probably use map to iterate over the days array */}
             <div className = "weekCheck">
-              Weekly Overview
+              Intake Days
+              <br></br>
               <br></br>
               <input
               type="checkbox"
@@ -375,7 +377,6 @@ const handleChange = (e) => {
               value={directions}
               onChange={(e) => setDirections(e.target.value)}
             />
-            <br />
             <input type="submit" />
           </form>
         </div>

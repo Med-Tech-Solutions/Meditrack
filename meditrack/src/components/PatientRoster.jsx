@@ -60,19 +60,21 @@ import Cookies from "js-cookie";
         .then((data) => {
             // console.log(data);
             setPatientsArray(data.patients);
+
         })
         // .then(data => console.log("log" ,data))
         .catch(() => console.log("got nothing"))
     }
 
     return (
-    <div className="patient-roster-container">
+    <div className="patient-roster-containers">
         
         {/* conditionally render the form based on the show state */}
         {show && (
             <form className="form-input" id="add-patient-form" onSubmit={(event) => {
                 event.preventDefault();
                 handleAddPatient();
+                setShow(!show);
                 }}>
 
                 <input

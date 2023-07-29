@@ -261,6 +261,10 @@ body {
   /* grid-row-end: 9; */
   /* height: 55vh; */
 }
+.weekCheck{
+  text-align: center;
+  font-weight: bold;
+}
 
 .form-input {
   display: flex;
@@ -292,8 +296,10 @@ body {
   border: none;
   border-radius: 5px;
   outline: none;
-  background-color: #0B73AB;
-  color: var(--cream);
+  /* background-color: #0B73AB; */
+  background-color: #f8c587;
+  /* color: var(--cream); */
+  color:#232D4B;
   font-weight: bold;
   cursor: pointer;
 }
@@ -529,6 +535,7 @@ body {
   /* color: var(--dark-red); */
   /* font-weight: bold; */
   cursor: pointer;
+  font-weight: bold;
 }
 
 .add-med{
@@ -576,30 +583,53 @@ body {
   /* border-radius: 50%; */
   /* display: inline-block; */
   margin-top: -60%;
-  margin-left: -40%;
+  margin-left: -40%; 
   justify-self: left;
+}
+
+#hide-patient img{
   filter: brightness(0) invert(1);
 }
 
+#hide-patient img:hover{
+  filter: brightness(1) saturate(100%) hue-rotate(120deg);
+}
+
+#hide-patient:active{
+  transform: translateY(3px);
+}
+
 #del-patient{
-  grid-column-start: 3;
-  grid-row-start: 6;
+  grid-column-start: 7;
+  grid-row-start: 1; 
   /* grid-row-end: 3; */
   /* height: 70%;
   width: 30%; */
-  background-color: #f8c587;
-  padding: 10px;
-  border: 1px;
-  border-radius: 20%;
-  /* margin-top: -30%; */ 
+  background-color: transparent;
+  padding: 0px;
+  /* border: 1px; */
+  /* border-radius: 20%; */
+  margin-top: -63%; 
+  margin-right: -23%;
+  /* margin: 0;  */
+  justify-self: end;
   /* display: inline-block; */
 }
 
-#del-patient:hover {background-color: #f9dcb9;}
+#del-patient:hover {
+  /* background-color: #AE2B39; */
+}
+
+#del-patient img {
+  filter: brightness(0) saturate(100%) invert(1);
+}
+
+#del-patient img:hover{
+  filter: brightness(1) saturate(100%) hue-rotate(120deg);
+  color: #AE2B39;
+}
 
 #del-patient:active{
-  background-color: #f9dcb9;
-  box-shadow: 0 2px #666;
   transform: translateY(3px);
 }
 
@@ -639,7 +669,7 @@ body {
 
 .roster{
   align-self: center;
-  font-weight: 100;
+  font-weight: 100px;
 }
 
 .roster:hover{
@@ -667,12 +697,17 @@ body {
   transition: 0.5s;
 }
 
-.patient-roster-container {
+#patient-roster-container{
   margin-top: 25px;
   display: grid; 
+}
+
+.patient-roster-containers {
+  /* display: grid;  */
   border:rgb(0, 0, 0);
   font-family: Roboto, Arial, Helvetica, sans-serif;
   font-size: 17px;
+  grid-row-end: auto;
 }
 
 /* form container for submitting image */
@@ -711,14 +746,16 @@ body {
 }
 
 .patientcard-buttons{
-  grid-column-start: 1; 
-  grid-column-end: 4;
+  grid-column-start: 5; 
+  grid-column-end: 8;
   grid-row-start: 6; 
   display: flex; 
   flex-direction: row;
-  justify-content: space-between;
-  padding-top: 1rem; 
+  justify-content: space-around;
+  /* padding-top: 1rem;  */
   padding-bottom: 1rem; 
+  padding-left: 3rem;
+  padding-right: 3rem;
   /* padding: 1rem; */
 }
 
