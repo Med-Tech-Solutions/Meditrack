@@ -1,6 +1,6 @@
 import './App.css';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import React from 'react';
+import React, { useState } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from "./components/Home";
@@ -13,7 +13,6 @@ import DoctorCalendar from './components/DoctorCalendar';
 import PatientCalendar from './components/PatientCalendar';
 import ScheduleReminders from './components/ScheduleReminders';
 import PatientsPage from './components/PatientsPage'
-import SideNav from './components/SideNav';
 
 /*
 ====================================
@@ -23,9 +22,10 @@ DASHBOARD PATH IS A TEMP PLACEHOLDER
 
 
 function App() {
+
   return (
     <div className="App">
-      <header className="App-header">
+      <header className="App-header" >
         <Navbar />
           <Routes>
             <Route exact path ="/" element={<Home />}></Route>

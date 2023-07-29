@@ -8,6 +8,7 @@ import CustomToolbar from './CustomToolbar';
 const DashCalendar = props => {
 
   const {
+    email,
     events,
     newEvent,
     allEvents,
@@ -18,52 +19,12 @@ const DashCalendar = props => {
     localizer,
     handlePatientSelection,
     handleAddEvent,
-    handleDeleteEvent
+    // handleDeleteEvent
   } = props;
+
+  
     
   return (
-    <div className="med-calendar-container" style={{minHeight: "87vh",marginTop: '10px'}}>
-
-      {/* <div>
-        <select className="select-patient"
-          value={selectedPatient?.firstName || ''}
-          onChange={(e) => handlePatientSelection(patientsArray.find(p => p.firstName === e.target.value))}
-        >
-          <option value="">Select Patient</option>
-          {patientsArray.map((patient) => (
-            <option key={patient.firstName} value={patient.firstName}>{patient.firstName}</option>
-          ))}
-        </select>
-      </div> */}
-  
-      {/* {selectedPatient && selectedPatient.medications && ( */}
-        <>
-          {/* <h2 className="log-meds">Log Medication</h2> */}
-          {/* <div> */}
-            {/* <select className="select-medication"
-              value={newEvent.title}
-              onChange={(e) => setNewEvent({ ...newEvent, title: e.target.value })}
-            >
-              <option value="">Select Medication</option>
-              {selectedPatient.medications.map((medication) => (
-                <option key={medication.name} value={medication.name}>{medication.name}</option>
-              ))}
-            </select>
-            <div className="date-picker" style={{ position: 'relative', zIndex: 9999 }}>
-              <DatePicker
-                placeholderText='Date and Time'
-                showTimeSelect
-                dateFormat="Pp"
-                style={{ marginRight: "10px", marginBottom: "10px" }}
-                selected={newEvent.start}
-                onChange={(start) => setNewEvent({ ...newEvent, start })}
-              />
-            </div> */}
-            {/* <button className="med-cal-btn" style={{ marginTop: "10px" }} onClick={handleAddEvent}>Add Event</button> */}
-          {/* </div> */}
-        </>
-      {/* )} */}
-  
       <Calendar
         view='day'
         localizer={localizer}
@@ -93,12 +54,12 @@ const DashCalendar = props => {
           event: ({ event }) => (
             <div>
               <span>{event.title}</span>
-              <button onClick={() => handleDeleteEvent(event)}>Delete</button>
+              {/* <button onClick={() => handleDeleteEvent(event)}>Delete</button> */}
             </div>
           ),
         }}
       />
-    </div>
+   
   );
   
   

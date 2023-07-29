@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { Link, useMatch, useResolvedPath } from "react-router-dom";
 import Cookies from "js-cookie";
 
-const Navbar = () => {
+const Navbar = (props) => {
+
   const [email, setEmail] = useState("");
 
   useEffect(() => {
@@ -15,17 +16,31 @@ const Navbar = () => {
     Cookies.remove("token");
   };
 
+
+  const ConditionalComponent = () => {
+    if (!email) {
+      // Component to render when email is set
+      console.log(email)
+      return  <Link className="site-title" to="/">Meditrack</Link>;
+    } else {
+      // Component to render when email is not set
+      console.log(email)
+      return <Link className="site-title" to="/dashboard">Meditrack</Link>;
+    }
+  };
+
   return (
     <nav className="navbar">
-      <Link className="site-title" to="/">
+      {/* <Link className="site-title" to="/">
         Meditrack
-      </Link>
+      </Link> */}
+      <ConditionalComponent />
       <ul>
         <CustomLink to="/dashboard">Dashboard</CustomLink>
         <CustomLink to="/patients">Patients</CustomLink>
-        <CustomLink to="/schedule">Schedule Reminders</CustomLink>
-        <CustomLink to="/patientcal">Medication Calendar</CustomLink>
-        <CustomLink to="/doccal">Schedule an Appointment</CustomLink>
+        <CustomLink to="/schedule">Reminders</CustomLink>
+        <CustomLink to="/patientcal">Calendar</CustomLink>
+        {/* <CustomLink to="/doccal">Schedule an Appointment</CustomLink> */}
         <CustomLink to="/dse">Diagnostic Suggestion Engine</CustomLink>
         <CustomLink to="/login" onClick={onLogout}>
           Logout
