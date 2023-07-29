@@ -47,6 +47,9 @@ body {
   min-height: 100vh;
 }
 
+/*
+
+
 
 /*
 ======================================================================================================================================================
@@ -827,9 +830,7 @@ body {
 
 ======================================================================================================================================================
 */
-/* .rbc-btn-group > button {
-  display: none;
-}  */
+
 .select-patient-header {
   font-size: 24px;
   font-weight: bold;
@@ -1050,6 +1051,22 @@ button.rbc-input::-moz-focus-inner {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.dashcalendar .rbc-toolbar {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: none;
   -ms-flex-wrap: wrap;
       flex-wrap: wrap;
   -webkit-box-pack: center;

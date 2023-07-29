@@ -1,6 +1,5 @@
 
 import React, {useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { dateFnsLocalizer } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 
@@ -8,6 +7,7 @@ import Cookies from "js-cookie";
 
 import DashCalendar from './DashCalendar';
 import DashPatient from './DashPatient';
+import DashMedInfo from './DashMedInfo';
 
 const Dashboard = props => {
   const events = [
@@ -88,63 +88,9 @@ const Dashboard = props => {
     // Update the selectedEvents state variable with the newly initialized array
     setSelectedEvents(filteredEvents);
   };
-  
-// Function to handle event deletion
-const handleDeleteEvent = (eventToDelete) => {
-  let update = [...patientsArray]; //this is update
-  let patient;
-  for (let i = 0; i < update.length; i++) {
-    if (update[i].firstName === eventToDelete.patientFirstName) {
-      patient = update[i];
-      console.log(patient);
-      // console.log('medicationlog id', patient.medicationLog[1]._id, eventToDelete);
-      const updatedMedicationLog = patient.medicationLog.filter(
-        (event) => event._id !== eventToDelete._id
-        //WHAT UNIQUE IDENTIFIERS ARE THERE BETWEEN THE EVENT AND MEDICATION LOGS???
-      );
-      // const updatedMedicationLog = [];
-      patient.medicationLog = updatedMedicationLog;
-      update[i] = patient;
-      console.log('update before fetch', update);
-      break;
-      }
-  }
-  fetch(`/api/dashboard/patient`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      email,
-      update,
-    }),
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Failed to delete event from the database.");
-      }
-      return response;
-    })
-    .then((result) => {
-      return result.json()
-    })
-    .then((result) => {
-      if (result === false) {
-        navigate('/login');
-      }
-      // Update the allEvents state after the successful DELETE request.
-      console.log('update after fetch', update)
-      const updatedAllEvents = allEvents.filter((event) => event !== eventToDelete);
-      const updatedSelectedEvents = selectedEvents.filter((event) => event !== eventToDelete);
-      setAllEvents(updatedAllEvents);
-      setSelectedEvents(updatedSelectedEvents);
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-}; 
-
+   
     const dashCalendarProps = {
+      email,
       events,
       allEvents,
       selectedEvents,
@@ -152,53 +98,57 @@ const handleDeleteEvent = (eventToDelete) => {
       selectedPatient,
       localizer,
       handlePatientSelection,
-      handleDeleteEvent
-
+      // handleDeleteEvent,
   };
+
 
     return (
       <div className = 'dashboard-container' style={{
         display: 'flex',
         flexDirection: 'column',
-
       }}>
-        <section className='dashboard-calendar' style={{
-          marginLeft:'35%',
-          marginRight:'35%',
-          height:400
+        <h2 className="name" style={{fontFamily: 'Roboto, Arial, Helvetica, sans-serif'}}>Welcome {name}</h2>
+        <div className='patient-select' style={{
+          display: 'flex',
+          justifyContent: 'center',
+          marginTop:'3%',
+          marginBottom:'10px',
+          // marginLeft:'47%'
           }}>
-          <div className='patient-select' style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            marginTop:'3%',
-            marginBottom:'0',
-            // marginLeft:'47%'
+          <select className="select-patient"
+            value={selectedPatient?.firstName || ''}
+            onChange={(e) => handlePatientSelection(patientsArray.find(p => p.firstName === e.target.value))}
+          >
+            <option value="">Select Patient</option>
+            {patientsArray.map((patient) => (
+            <option key={patient.firstName} value={patient.firstName}>{patient.firstName}</option>
+            ))}
+          </select>
+        </div>
+        <div style={{display: 'flex', flexDirection: 'column'}}>
+          <section className='dashboard-calendar' style={{
+            marginLeft:'35%',
+            marginRight:'35%',
+            height:400,
+            marginBottom: '0px'
             }}>
-            <select className="select-patient"
-              value={selectedPatient?.firstName || ''}
-              onChange={(e) => handlePatientSelection(patientsArray.find(p => p.firstName === e.target.value))}
-            >
-              <option value="">Select Patient</option>
-              {patientsArray.map((patient) => (
-              <option key={patient.firstName} value={patient.firstName}>{patient.firstName}</option>
-              ))}
-            </select>
-          </div>
-          <DashCalendar 
-              localizer={localizer}
-              events={selectedEvents} // Pass the selectedEvents array to populate the calendar with events
-              {...dashCalendarProps}
-              
-          />
-          </section>
-        {/* <section className="dash-lists" style={{
-          display:'flex',
-          marginLeft:'20%',
-          marginRight:'20%'
-        }}>
-          <DashPatient />
-        </section> */}
-        
+            <div className='dashcalendar' style={{marginBottom: '0px'}}>
+              <DashCalendar   
+                  localizer={localizer}
+                  events={selectedEvents} // Pass the selectedEvents array to populate the calendar with events
+                  {...dashCalendarProps}  
+              />
+            </div>
+            </section>
+            <div style={{display: 'flex', justifyContent: 'center'}}>
+              <section className='patientinfo' style={{marginRight: '20px'}}>
+                <DashPatient meds={selectedPatient.medications} patient={selectedPatient}/>
+              </section>  
+              <section className='medicationinfo'>
+                <DashMedInfo meds={selectedPatient.medications}/>
+              </section>
+            </div>
+          </div>      
       </div>
     );
   }

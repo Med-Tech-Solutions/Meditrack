@@ -249,10 +249,6 @@ const handleDeleteEvent = (eventToDelete) => {
         style={{ 
           height: 500, 
           margin: "50px",
-          // '.rbc-btn-group': {
-          //   display: 'inline',
-          //   whiteSpace: 'nowrap',
-          // } 
         }}
         components={{
           // Customize the rendering of each event in the calendar
